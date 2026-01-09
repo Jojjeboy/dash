@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
+import ShellLayout from '@/layouts/ShellLayout.vue'
 </script>
 
 <template>
-  <RouterView />
+  <ShellLayout />
 </template>
