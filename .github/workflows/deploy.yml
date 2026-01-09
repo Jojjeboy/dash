@@ -37,6 +37,12 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Type Check
+        run: npm run type-check
+      - name: Test
+        run: npm run test:ci
       - name: Build
         run: npm run build
         env:

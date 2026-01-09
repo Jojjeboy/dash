@@ -3,14 +3,26 @@
 @tailwind utilities;
 
 :root {
+  /* Default: Dark Mode */
   --dash-bg: #1a1c1e;
   --dash-tile-bg: rgba(255, 255, 255, 0.05);
   --dash-tile-border: rgba(255, 255, 255, 0.1);
   --dash-text: #e2e2e2;
+  --dash-text-muted: rgba(255, 255, 255, 0.4);
+}
+
+.light-mode {
+  --dash-bg: #f5f7f9;
+  --dash-tile-bg: rgba(255, 255, 255, 0.7);
+  --dash-tile-border: rgba(255, 255, 255, 0.4);
+  --dash-text: #1a1c1e;
+  --dash-text-muted: rgba(0, 0, 0, 0.3);
 }
 
 body {
-  @apply bg-[#1a1c1e] text-[#e2e2e2] overflow-hidden;
+  background-color: var(--dash-bg);
+  color: var(--dash-text);
+  @apply overflow-hidden transition-colors duration-700 ease-in-out;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   user-select: none;
 }
@@ -21,7 +33,9 @@ body {
 
 /* Glassmorphism utility for tiles */
 .glass-tile {
-  @apply bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 shadow-lg;
+  background-color: var(--dash-tile-bg);
+  border-color: var(--dash-tile-border);
+  @apply backdrop-blur-md rounded-2xl border shadow-lg transition-all duration-500 ease-in-out;
 }
 
 /* Transitions */

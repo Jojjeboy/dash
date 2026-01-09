@@ -12,25 +12,49 @@ export default defineConfig({
     vueDevTools(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['logo.png', 'apple-touch-icon.png', 'masked-icon.svg'],
+      includeAssets: ['logo.svg', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
-        name: 'VueDash - Hallway dashboard',
-        short_name: 'VueDash',
-        description: 'A Hallway dashboard',
-        theme_color: '#ffffff',
+        name: 'Dash - Home Hub',
+        short_name: 'Dash',
+        description: 'A calm, glanceable home dashboard',
+        theme_color: '#1a1c1e',
+        background_color: '#1a1c1e',
+        display: 'standalone',
+        orientation: 'landscape',
         icons: [
           {
             src: 'img/icons/pwa-192x192.png',
             sizes: '192x192',
             type: 'image/png',
+            purpose: 'any maskable'
           },
           {
             src: 'img/icons/pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png',
+            purpose: 'any maskable'
           },
         ],
       },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365 // <1 year
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          }
+        ]
+      }
     }),
   ],
   base: '/dash/',

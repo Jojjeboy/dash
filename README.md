@@ -24,6 +24,10 @@ Dash is a wall-mounted, always-on dashboard web application designed to run on a
 - `src/stores/`: Pinia stores for auth and configuration.
 - `src/views/`: Main application routes (Dashboard, Login, Settings).
 
+## Documentation
+
+- [Widget Development Guide](./docs/WIDGET_DEVELOPMENT.md) — How to create and register new widgets.
+
 ## Getting Started
 
 ### Prerequisites
