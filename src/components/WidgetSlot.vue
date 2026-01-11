@@ -31,7 +31,7 @@ const toggleExpand = () => {
   <div
     class="glass-tile flex items-center justify-center relative group transition-all duration-500 ease-in-out"
     :class="[
-      isExpanded ? 'fixed inset-4 z-[100] scale-100' : 'relative scale-100',
+      isExpanded ? 'fixed inset-0 z-[100] scale-100' : 'relative scale-100',
       !widgetId && 'opacity-50'
     ]"
     @click="toggleExpand"

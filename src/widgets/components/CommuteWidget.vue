@@ -84,12 +84,12 @@ const loadData = async () => {
   <div class="h-full w-full flex flex-col p-3 relative overflow-hidden">
     <!-- Header -->
     <div class="flex items-center justify-between mb-2 z-10">
-      <div class="flex flex-col flex-1 min-w-0">
+      <div class="flex flex-col">
         <!-- Station Selector -->
         <select
           v-model="selectedGid"
           @change="changeStation"
-          class="text-[var(--dash-text)] font-bold text-base leading-none bg-transparent border-none outline-none cursor-pointer hover:text-white transition-colors pr-4 truncate"
+          class="text-[var(--dash-text)] font-bold text-base leading-none bg-transparent border-none outline-none cursor-pointer hover:text-white transition-colors w-auto"
         >
           <option
             v-for="station in STATIONS"
