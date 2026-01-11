@@ -28,3 +28,11 @@ class WidgetRegistry {
 }
 
 export const registry = new WidgetRegistry()
+
+registry.register({
+  id: 'commute_widget',
+  title: 'Trafik - Mariaplan',
+  description: 'Avgångar från Mariaplan (Västtrafik)',
+  component: () => import('./components/CommuteWidget.vue'),
+  defaultSize: 'medium'
+})
