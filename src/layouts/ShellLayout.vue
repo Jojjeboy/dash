@@ -3,7 +3,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useDashboardStore } from '@/stores/dashboard'
 import { onMounted, onUnmounted } from 'vue'
 import { useFullscreen } from '@/composables/useFullscreen'
-import UpdatePrompt from '@/components/UpdatePrompt.vue'
+import UpdatePrompt from '../components/UpdatePrompt.vue'
 
 const authStore = useAuthStore()
 const dashboardStore = useDashboardStore()
