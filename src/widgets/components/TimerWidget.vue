@@ -51,14 +51,34 @@ watch([inputMinutes, inputSeconds], () => {
 })
 
 const playAlert = async () => {
-  if (!audioContext.value) return
+  try {
+    // Vibration fallback for mobile
+    if ('vibrate' in navigator) {
+      navigator.vibrate([200, 100, 200, 100, 200])
+    }
 
-  if (audioContext.value.state === 'suspended') {
-    await audioContext.value.resume()
+    // Ensure AudioContext is resumed
+    if (audioContext.value?.state === 'suspended') {
+      await audioContext.value.resume()
+    }
+
+    // Create fresh Audio instance each time for better mobile compatibility
+    const audio = new Audio(alertSound)
+    audio.volume = 1.0
+
+    // Play with promise handling for mobile
+    const playPromise = audio.play()
+    if (playPromise !== undefined) {
+      await playPromise
+      console.log('Alert played successfully')
+    }
+  } catch (e) {
+    console.error('Error playing audio:', e)
+    // Vibrate again as fallback
+    if ('vibrate' in navigator) {
+      navigator.vibrate(1000)
+    }
   }
-
-  const audio = new Audio(alertSound)
-  audio.play().catch(e => console.error('Error playing audio:', e))
 }
 
 const formattedTime = computed(() => {
@@ -72,9 +92,11 @@ const startTimer = () => {
     timeLeft.value = (inputMinutes.value * 60) + inputSeconds.value
   }
 
-  // Resume audio context if suspended (browser policy)
+  // CRITICAL: Resume audio context on user gesture (required for mobile)
   if (audioContext.value?.state === 'suspended') {
-    audioContext.value.resume()
+    audioContext.value.resume().then(() => {
+      console.log('AudioContext resumed on user interaction')
+    }).catch(e => console.error('Failed to resume AudioContext:', e))
   }
 
   if (!isRunning.value) {
