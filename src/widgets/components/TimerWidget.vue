@@ -5,10 +5,6 @@ import alertSound from '@/assets/timer.mp3'
 
 const { t } = useI18n()
 
-defineProps<{
-  isExpanded?: boolean
-}>()
-
 const timeLeft = ref(0)
 const inputMinutes = ref(5)
 const inputSeconds = ref(0)
@@ -145,27 +141,22 @@ onUnmounted(() => {
 <template>
   <div class="h-full w-full flex flex-col items-center justify-center p-4">
     <div v-if="timeLeft > 0 || isRunning" class="text-center flex flex-col items-center justify-center h-full w-full">
-      <div
-        class="text-[var(--dash-text)] font-black mb-4 tabular-nums leading-none transition-all duration-300"
-        :class="isExpanded ? 'text-[40vh]' : 'text-7xl'"
-      >
+      <div class="text-[var(--dash-text)] font-black mb-4 tabular-nums leading-none transition-all duration-300 text-7xl">
         {{ formattedTime }}
       </div>
       <div class="flex gap-2">
         <button
           @click.stop="isRunning ? stopTimer() : startTimer()"
-          class="rounded-xl uppercase font-bold tracking-widest transition-all"
+          class="rounded-xl uppercase font-bold tracking-widest transition-all px-4 py-2 text-[10px]"
           :class="[
-            isRunning ? 'bg-red-500/10 text-red-500 border border-red-500/20' : 'bg-green-500/10 text-green-500 border border-green-500/20',
-            isExpanded ? 'px-12 py-6 text-2xl' : 'px-4 py-2 text-[10px]'
+            isRunning ? 'bg-red-500/10 text-red-500 border border-red-500/20' : 'bg-green-500/10 text-green-500 border border-green-500/20'
           ]"
         >
           {{ isRunning ? t('pause') : t('resume') }}
         </button>
         <button
           @click.stop="resetTimer"
-          class="rounded-xl uppercase font-bold tracking-widest bg-white/5 text-[var(--dash-text-muted)] border border-white/5 hover:bg-white/10"
-          :class="isExpanded ? 'px-12 py-6 text-2xl' : 'px-4 py-2 text-[10px]'"
+          class="rounded-xl uppercase font-bold tracking-widest bg-white/5 text-[var(--dash-text-muted)] border border-white/5 hover:bg-white/10 px-4 py-2 text-[10px]"
         >
           {{ t('reset') }}
         </button>

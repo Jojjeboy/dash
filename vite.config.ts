@@ -6,12 +6,29 @@ import { VitePWA } from 'vite-plugin-pwa'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
-const commitMessage = execSync('git log -1 --pretty=%B').toString().trim()
+function getGitInfo() {
+  try {
+    const message = execSync('git log -1 --pretty=%B').toString().trim()
+    const hash = execSync('git rev-parse --short HEAD').toString().trim()
+    return { message, hash }
+  } catch (e) {
+    console.warn('Could not get git info, using defaults', e)
+    return {
+      message: process.env.GITHUB_SHA ? `Build from GitHub Action (${process.env.GITHUB_SHA.slice(0, 7)})` : 'No commit info',
+      hash: process.env.GITHUB_SHA?.slice(0, 7) || 'unknown'
+    }
+  }
+}
+
+const { message: commitMessage, hash: commitHash } = getGitInfo()
+const buildTime = new Date().toISOString()
 
 // https://vite.dev/config/
 export default defineConfig({
   define: {
-    __LAST_COMMIT_MESSAGE__: JSON.stringify(commitMessage)
+    __LAST_COMMIT_MESSAGE__: JSON.stringify(commitMessage),
+    __COMMIT_HASH__: JSON.stringify(commitHash),
+    __BUILD_TIME__: JSON.stringify(buildTime)
   },
   plugins: [
     vue(),

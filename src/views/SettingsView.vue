@@ -20,6 +20,11 @@ const handleLogout = async () => {
   }
 }
 const lastCommitMessage = __LAST_COMMIT_MESSAGE__
+const commitHash = __COMMIT_HASH__
+const buildTime = new Date(__BUILD_TIME__).toLocaleString('sv-SE', {
+  dateStyle: 'short',
+  timeStyle: 'short'
+})
 </script>
 
 <template>
@@ -122,8 +127,12 @@ const lastCommitMessage = __LAST_COMMIT_MESSAGE__
           <div class="flex items-center justify-between mb-4">
             <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">Latest Update</h2>
           </div>
-          <div class="p-4 bg-white/5 rounded-2xl border border-white/5 shadow-inner">
-            <p class="text-xs font-medium text-[var(--dash-text)] opacity-80 leading-relaxed">{{ lastCommitMessage }}</p>
+          <div class="p-4 bg-white/5 rounded-2xl border border-white/5 shadow-inner space-y-2">
+            <p class="text-xs font-bold text-[var(--dash-text)] opacity-90 leading-relaxed">{{ lastCommitMessage }}</p>
+            <div class="flex items-center justify-between text-[9px] uppercase tracking-wider font-bold text-[var(--dash-text-muted)]">
+              <span>Hash: <span class="text-[var(--dash-text)] opacity-60">{{ commitHash }}</span></span>
+              <span>Built: <span class="text-[var(--dash-text)] opacity-60">{{ buildTime }}</span></span>
+            </div>
           </div>
         </section>
 
