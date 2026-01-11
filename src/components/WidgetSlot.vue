@@ -53,6 +53,7 @@ const toggleExpand = () => {
         :is="WidgetComponent"
         v-if="WidgetComponent"
         class="w-full h-full"
+        :is-expanded="isExpanded"
       />
 
       <!-- Empty State -->
