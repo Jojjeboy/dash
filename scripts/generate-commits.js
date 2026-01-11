@@ -38,7 +38,7 @@ function getCommits() {
                 message
             };
         }).filter(Boolean);
-    } catch (error) {
+    } catch {
         console.warn('Git log failed or not a git repository. Using fallback data.');
 
         // Fallback for GitHub Actions or non-git environments
