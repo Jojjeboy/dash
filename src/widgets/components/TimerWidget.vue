@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onUnmounted, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import alertSound from '@/assets/alert.wav'
+import alertSound from '@/assets/timer.mp3'
 
 const { t } = useI18n()
 
