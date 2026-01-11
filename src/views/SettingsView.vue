@@ -19,6 +19,7 @@ const handleLogout = async () => {
     console.error('Logout failed:', error)
   }
 }
+const lastCommitMessage = __LAST_COMMIT_MESSAGE__
 </script>
 
 <template>
@@ -113,6 +114,16 @@ const handleLogout = async () => {
               <p class="text-sm font-bold text-[var(--dash-text)] truncate">{{ authStore.user?.displayName || 'Family Member' }}</p>
               <p class="text-[10px] text-[var(--dash-text-muted)] truncate tracking-tight font-medium">{{ authStore.user?.email }}</p>
             </div>
+          </div>
+        </section>
+
+        <!-- Latest Update Section -->
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">Latest Update</h2>
+          </div>
+          <div class="p-4 bg-white/5 rounded-2xl border border-white/5 shadow-inner">
+            <p class="text-xs font-medium text-[var(--dash-text)] opacity-80 leading-relaxed">{{ lastCommitMessage }}</p>
           </div>
         </section>
 

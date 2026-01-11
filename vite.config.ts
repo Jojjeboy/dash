@@ -1,12 +1,18 @@
 import { fileURLToPath, URL } from 'node:url'
+import { execSync } from 'node:child_process'
 
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
+const commitMessage = execSync('git log -1 --pretty=%B').toString().trim()
+
 // https://vite.dev/config/
 export default defineConfig({
+  define: {
+    __LAST_COMMIT_MESSAGE__: JSON.stringify(commitMessage)
+  },
   plugins: [
     vue(),
     vueDevTools(),
