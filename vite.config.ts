@@ -17,7 +17,7 @@ export default defineConfig({
     vue(),
     vueDevTools(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       includeAssets: ['logo.svg', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
         name: 'Dash - Home Hub',

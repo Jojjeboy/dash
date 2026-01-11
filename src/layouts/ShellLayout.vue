@@ -3,6 +3,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useDashboardStore } from '@/stores/dashboard'
 import { onMounted, onUnmounted } from 'vue'
 import { useFullscreen } from '@/composables/useFullscreen'
+import UpdatePrompt from '@/components/UpdatePrompt.vue'
 
 const authStore = useAuthStore()
 const dashboardStore = useDashboardStore()
@@ -76,6 +77,7 @@ onUnmounted(() => {
 
     <!-- Global Layout Overlays (Modals, etc.) -->
     <div id="modal-container"></div>
+    <UpdatePrompt />
   </div>
 </template>
 
