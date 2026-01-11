@@ -3,7 +3,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useDashboardStore } from '@/stores/dashboard'
 import { useRouter } from 'vue-router'
 import { registry } from '@/widgets/registry'
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 
 const authStore = useAuthStore()
 const dashboardStore = useDashboardStore()
@@ -24,6 +24,29 @@ const commitHash = __COMMIT_HASH__
 const buildTime = new Date(__BUILD_TIME__).toLocaleString('sv-SE', {
   dateStyle: 'short',
   timeStyle: 'short'
+})
+
+interface Commit {
+  hash: string
+  fullHash: string
+  date: string
+  message: string
+}
+
+const commitHistory = ref<Commit[]>([])
+const loadingHistory = ref(true)
+
+onMounted(async () => {
+  try {
+    const response = await fetch('/dash/commits.json')
+    if (response.ok) {
+      commitHistory.value = await response.json()
+    }
+  } catch (error) {
+    console.error('Failed to load commit history:', error)
+  } finally {
+    loadingHistory.value = false
+  }
 })
 </script>
 
@@ -125,13 +148,33 @@ const buildTime = new Date(__BUILD_TIME__).toLocaleString('sv-SE', {
         <!-- Latest Update Section -->
         <section>
           <div class="flex items-center justify-between mb-4">
-            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">Latest Update</h2>
+            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">Latest Build</h2>
           </div>
           <div class="p-4 bg-white/5 rounded-2xl border border-white/5 shadow-inner space-y-2">
             <p class="text-xs font-bold text-[var(--dash-text)] opacity-90 leading-relaxed">{{ lastCommitMessage }}</p>
             <div class="flex items-center justify-between text-[9px] uppercase tracking-wider font-bold text-[var(--dash-text-muted)]">
               <span>Hash: <span class="text-[var(--dash-text)] opacity-60">{{ commitHash }}</span></span>
               <span>Built: <span class="text-[var(--dash-text)] opacity-60">{{ buildTime }}</span></span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Update History Section -->
+        <section v-if="commitHistory.length > 0">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">Update History</h2>
+          </div>
+          <div class="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+            <div
+              v-for="commit in commitHistory"
+              :key="commit.fullHash"
+              class="p-3 bg-white/5 rounded-xl border border-white/5 flex flex-col gap-1"
+            >
+              <p class="text-[11px] font-medium text-[var(--dash-text)] leading-tight">{{ commit.message }}</p>
+              <div class="flex items-center justify-between text-[8px] uppercase tracking-wider font-bold text-[var(--dash-text-muted)]">
+                <span>{{ commit.hash }}</span>
+                <span>{{ new Date(commit.date).toLocaleDateString('sv-SE') }}</span>
+              </div>
             </div>
           </div>
         </section>

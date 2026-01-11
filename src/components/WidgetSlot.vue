@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineAsyncComponent, computed } from 'vue'
+import { defineAsyncComponent, computed } from 'vue'
 import { registry } from '@/widgets/registry'
 
 interface Props {
