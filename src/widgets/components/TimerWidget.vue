@@ -181,6 +181,7 @@ onUnmounted(() => {
           <input
             v-model="inputMinutes"
             type="number"
+            @click.stop
             class="bg-transparent text-center w-32 text-7xl font-black text-[var(--dash-text)] outline-none placeholder-[var(--dash-text-muted)] hover:text-white focus:text-white transition-colors"
             placeholder="00"
           >
@@ -194,6 +195,7 @@ onUnmounted(() => {
           <input
             v-model="inputSeconds"
             type="number"
+            @click.stop
             class="bg-transparent text-center w-32 text-7xl font-black text-[var(--dash-text)] outline-none placeholder-[var(--dash-text-muted)] hover:text-white focus:text-white transition-colors"
             placeholder="00"
           >
