@@ -89,6 +89,7 @@ const loadData = async () => {
         <select
           v-model="selectedGid"
           @change="changeStation"
+          @click.stop
           class="text-[var(--dash-text)] font-bold text-base leading-none bg-transparent border-none outline-none cursor-pointer hover:text-white transition-colors w-auto"
         >
           <option
@@ -103,7 +104,7 @@ const loadData = async () => {
         <span class="text-[var(--dash-text-muted)] text-[10px] uppercase tracking-wider font-bold mt-0.5">Departures</span>
       </div>
       <button
-        @click="loadData"
+        @click.stop="loadData"
         class="text-[var(--dash-text-muted)] hover:text-white transition-colors p-1"
         :class="{ 'animate-spin': loading }"
         title="Refresh"
