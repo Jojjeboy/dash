@@ -1,0 +1,116 @@
+[
+  {
+    "hash": "63eefa7",
+    "fullHash": "63eefa7c5e93907ee80f4dde0fce665426388994",
+    "date": "2026-01-11 21:44:37 +0100",
+    "message": "Commit message"
+  },
+  {
+    "hash": "6bea9fe",
+    "fullHash": "6bea9fe6af25c17e97add25919e39d605e06904e",
+    "date": "2026-01-11 21:35:37 +0100",
+    "message": "mc fix again"
+  },
+  {
+    "hash": "6f17965",
+    "fullHash": "6f179651f3efab129be59a5477b2f32ce3246702",
+    "date": "2026-01-11 21:35:03 +0100",
+    "message": "mc fix"
+  },
+  {
+    "hash": "8034105",
+    "fullHash": "80341050b9ffc49bd8e3de79ec078d0046790cd7",
+    "date": "2026-01-11 21:32:15 +0100",
+    "message": "mc"
+  },
+  {
+    "hash": "436d14a",
+    "fullHash": "436d14a2f3445b2ade6e583352b50163a720f366",
+    "date": "2026-01-11 21:24:43 +0100",
+    "message": "PWA update  alert"
+  },
+  {
+    "hash": "55c490f",
+    "fullHash": "55c490ff131d7a410353d00283537fa4f5429385",
+    "date": "2026-01-11 21:19:41 +0100",
+    "message": "new alert"
+  },
+  {
+    "hash": "70a8f89",
+    "fullHash": "70a8f89fb8e45241071aee607b4aa48bfb2664d3",
+    "date": "2026-01-11 21:08:15 +0100",
+    "message": "More UI fixes"
+  },
+  {
+    "hash": "f583c57",
+    "fullHash": "f583c57310210ed3792f3cc483b235535a765a62",
+    "date": "2026-01-11 21:06:44 +0100",
+    "message": "More UI"
+  },
+  {
+    "hash": "849b531",
+    "fullHash": "849b53159502aee4eae36b268c511fdc588a9046",
+    "date": "2026-01-11 21:03:39 +0100",
+    "message": "Vasttrafik UI"
+  },
+  {
+    "hash": "c23ff66",
+    "fullHash": "c23ff66f03ce6054e6ed671837d73e51a9cf4225",
+    "date": "2026-01-11 20:40:40 +0100",
+    "message": "Vasttrafik UI"
+  },
+  {
+    "hash": "e1bf9e1",
+    "fullHash": "e1bf9e1d947b6dbdf649346c4a7da01017c73fb6",
+    "date": "2026-01-11 20:38:51 +0100",
+    "message": "Vasttrafik multiple stations"
+  },
+  {
+    "hash": "6f5f9ee",
+    "fullHash": "6f5f9ee25a7369c7d900b2a16eff23519da22792",
+    "date": "2026-01-11 20:27:45 +0100",
+    "message": "Vasttrafik"
+  },
+  {
+    "hash": "677191a",
+    "fullHash": "677191aaa3b5e4052990e3399e9f2dd76619a8da",
+    "date": "2026-01-11 20:03:46 +0100",
+    "message": "Alert and sizes and smaler fix"
+  },
+  {
+    "hash": "148d37d",
+    "fullHash": "148d37d872fd026a769297a88143461ec840c276",
+    "date": "2026-01-09 16:30:11 +0100",
+    "message": "Phase 5: Final hardening, theme persistence, and navigation improvements"
+  },
+  {
+    "hash": "91b5be8",
+    "fullHash": "91b5be8b7d5254e30bb14ca31829240124a9cb80",
+    "date": "2026-01-09 15:41:35 +0100",
+    "message": "Dashboard start boxes"
+  },
+  {
+    "hash": "da1cc78",
+    "fullHash": "da1cc7884c2d8998dd976619a6a10d6da8812cee",
+    "date": "2026-01-09 15:02:31 +0100",
+    "message": "mc"
+  },
+  {
+    "hash": "1e3132c",
+    "fullHash": "1e3132c2545944414818a7697d693df03dfbd346",
+    "date": "2026-01-09 13:41:40 +0100",
+    "message": "Name change"
+  },
+  {
+    "hash": "43404ea",
+    "fullHash": "43404ea5018b98253b2ef3267b628e843a46a144",
+    "date": "2026-01-09 13:23:27 +0100",
+    "message": "Initial"
+  },
+  {
+    "hash": "6c44435",
+    "fullHash": "6c44435905e7c4da64880fdcd76319181aed0d68",
+    "date": "2026-01-09 13:14:12 +0100",
+    "message": "first commit"
+  }
+]
