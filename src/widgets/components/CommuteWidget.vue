@@ -1,14 +1,46 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { getDepartures, type Departure } from '@/services/vasttrafik'
+import { getDepartures, STATIONS, type Departure } from '@/services/vasttrafik'
 import { ArrowPathIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline'
 
 const departures = ref<Departure[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
+const selectedGid = ref<string>(STATIONS[0]?.gid ?? '9021014004730000') // Default: Mariaplan
 let intervalId: number | null = null
 
 const now = ref(Date.now())
+
+const selectedStation = computed(() =>
+  STATIONS.find(s => s.gid === selectedGid.value) ?? STATIONS[0]
+)
+
+// Load saved station from localStorage
+onMounted(() => {
+  const savedGid = localStorage.getItem('dash_commute_station')
+  if (savedGid && STATIONS.find(s => s.gid === savedGid)) {
+    selectedGid.value = savedGid
+  }
+
+  loadData()
+  // Update data every 60s
+  intervalId = window.setInterval(loadData, 60000)
+
+  // Update relative time calculation every 10s
+  setInterval(() => {
+    now.value = Date.now()
+  }, 10000)
+})
+
+onUnmounted(() => {
+  if (intervalId) clearInterval(intervalId)
+})
+
+// Handle station change
+const changeStation = () => {
+  localStorage.setItem('dash_commute_station', selectedGid.value)
+  loadData()
+}
 
 // Format absolute time (HH:MM)
 const formatTime = (dateString: string) => {
@@ -36,7 +68,7 @@ const loadData = async () => {
   error.value = null
 
   try {
-    const data = await getDepartures()
+    const data = await getDepartures((selectedStation.value ?? STATIONS[0]!).gid)
     departures.value = data
     now.value = Date.now() // Update 'now' reference
   } catch (err) {
@@ -46,29 +78,28 @@ const loadData = async () => {
     loading.value = false
   }
 }
-
-onMounted(() => {
-  loadData()
-  // Update data every 60s
-  intervalId = window.setInterval(loadData, 60000)
-
-  // Update relative time calculation every 10s
-  setInterval(() => {
-    now.value = Date.now()
-  }, 10000)
-})
-
-onUnmounted(() => {
-  if (intervalId) clearInterval(intervalId)
-})
 </script>
 
 <template>
   <div class="h-full w-full flex flex-col p-3 relative overflow-hidden">
     <!-- Header -->
     <div class="flex items-center justify-between mb-2 z-10">
-      <div class="flex flex-col">
-        <h2 class="text-[var(--dash-text)] font-bold text-base leading-none">Mariaplan</h2>
+      <div class="flex flex-col flex-1 min-w-0">
+        <!-- Station Selector -->
+        <select
+          v-model="selectedGid"
+          @change="changeStation"
+          class="text-[var(--dash-text)] font-bold text-base leading-none bg-transparent border-none outline-none cursor-pointer hover:text-white transition-colors pr-4 truncate"
+        >
+          <option
+            v-for="station in STATIONS"
+            :key="station.gid"
+            :value="station.gid"
+            class="bg-[var(--dash-bg)] text-[var(--dash-text)]"
+          >
+            {{ station.name }}
+          </option>
+        </select>
         <span class="text-[var(--dash-text-muted)] text-[10px] uppercase tracking-wider font-bold mt-0.5">Departures</span>
       </div>
       <button
