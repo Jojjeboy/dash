@@ -10,6 +10,7 @@ const selectedGid = ref<string>(STATIONS[0]?.gid ?? '9021014004730000') // Defau
 let intervalId: number | null = null
 
 const now = ref(Date.now())
+const isPortrait = ref(window.innerHeight > window.innerWidth)
 
 const selectedStation = computed(() =>
   STATIONS.find(s => s.gid === selectedGid.value) ?? STATIONS[0]
@@ -30,6 +31,17 @@ onMounted(() => {
   setInterval(() => {
     now.value = Date.now()
   }, 10000)
+
+  // Update orientation on resize
+  const handleResize = () => {
+    isPortrait.value = window.innerHeight > window.innerWidth
+  }
+  window.addEventListener('resize', handleResize)
+
+  // Clean up on unmount
+  onUnmounted(() => {
+    window.removeEventListener('resize', handleResize)
+  })
 })
 
 onUnmounted(() => {
@@ -55,12 +67,13 @@ const getRelativeMinutes = (dateString: string) => {
 }
 
 const filteredDepartures = computed(() => {
+  const limit = isPortrait.value ? 10 : 5 // More departures in portrait mode
   return departures.value
     .filter(dep => {
       const time = new Date(dep.estimatedTime || dep.plannedTime).getTime()
       return time > now.value // Only future departures
     })
-    .slice(0, 5) // Limit to fit view
+    .slice(0, limit)
 })
 
 const loadData = async () => {

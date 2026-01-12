@@ -10,12 +10,22 @@ const selectedDate = ref(new Date())
 const loading = ref(true)
 const error = ref<string | null>(null)
 const currentTime = ref(new Date())
+const widgetContainer = ref<HTMLElement | null>(null)
 
 // Update current time every minute
 onMounted(() => {
   window.setInterval(() => {
     currentTime.value = new Date()
   }, 60000) // Update every minute
+  
+  // Log container dimensions for debugging
+  if (widgetContainer.value) {
+    const rect = widgetContainer.value.getBoundingClientRect()
+    console.log('📐 Calendar Widget Container Dimensions:')
+    console.log(`   Width: ${rect.width}px (${rect.width.toFixed(0)}px)`)
+    console.log(`   Height: ${rect.height}px (${rect.height.toFixed(0)}px)`)
+    console.log(`   Available space: ${rect.width.toFixed(0)}px × ${rect.height.toFixed(0)}px`)
+  }
 })
 
 // Load ICS file
@@ -136,34 +146,34 @@ const currentTimePosition = computed(() => {
 </script>
 
 <template>
-  <div class="h-full w-full flex flex-col glass-tile p-3 overflow-hidden">
+  <div ref="widgetContainer" class="h-full w-full flex flex-col glass-tile p-1.5 overflow-hidden">
     <!-- Header -->
-    <div class="flex items-center justify-between mb-2">
-      <h2 class="text-[9px] font-bold text-[var(--dash-text)] uppercase tracking-wider">Schedule</h2>
-      <div class="flex gap-1">
+    <div class="flex items-center justify-between mb-0.5">
+      <h2 class="text-[7px] font-bold text-[var(--dash-text)] uppercase tracking-wider">Schedule</h2>
+      <div class="flex gap-0.5">
         <button
           @click="goToPreviousDay"
-          class="p-1 rounded-md bg-white/5 hover:bg-white/10 transition-colors"
+          class="p-0.5 rounded bg-white/5 hover:bg-white/10 transition-colors"
           title="Previous Day"
         >
-          <svg class="w-3 h-3 text-[var(--dash-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="w-2.5 h-2.5 text-[var(--dash-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
         <button
           @click="goToToday"
           :class="{ 'opacity-50': isToday }"
-          class="px-2 py-1 rounded-md bg-white/5 hover:bg-white/10 transition-colors text-[8px] font-bold uppercase tracking-wider text-[var(--dash-text)]"
+          class="px-1.5 py-0.5 rounded bg-white/5 hover:bg-white/10 transition-colors text-[7px] font-bold uppercase tracking-wider text-[var(--dash-text)]"
           title="Today"
         >
           Today
         </button>
         <button
           @click="goToNextDay"
-          class="p-1 rounded-md bg-white/5 hover:bg-white/10 transition-colors"
+          class="p-0.5 rounded bg-white/5 hover:bg-white/10 transition-colors"
           title="Next Day"
         >
-          <svg class="w-3 h-3 text-[var(--dash-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="w-2.5 h-2.5 text-[var(--dash-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
         </button>
@@ -171,8 +181,8 @@ const currentTimePosition = computed(() => {
     </div>
 
     <!-- Date Display -->
-    <div class="mb-2">
-      <p class="text-[9px] text-[var(--dash-text-muted)] font-medium">
+    <div class="mb-0.5">
+      <p class="text-[7px] text-[var(--dash-text-muted)] font-medium">
         {{ selectedDate.toLocaleDateString('sv-SE', { weekday: 'short', month: 'short', day: 'numeric' }) }}
       </p>
     </div>
@@ -207,11 +217,11 @@ const currentTimePosition = computed(() => {
       </div>
 
       <!-- Events -->
-      <div class="space-y-1.5">
+      <div class="space-y-0.5">
         <div
           v-for="event in dayEvents"
           :key="event.uid"
-          class="relative p-2 rounded-lg border transition-all"
+          class="relative p-1 rounded border transition-all"
           :class="{
             'ring-1 ring-white/20': isCurrentEvent(event),
             'border-white/10': !isCurrentEvent(event)
@@ -222,25 +232,25 @@ const currentTimePosition = computed(() => {
           }"
         >
           <!-- Time & Subject -->
-          <div class="flex items-start justify-between gap-1 mb-1">
-            <span class="text-[8px] font-bold text-[var(--dash-text)] uppercase tracking-wide">
+          <div class="flex items-start justify-between gap-0.5">
+            <span class="text-[6px] font-bold text-[var(--dash-text)] uppercase tracking-wide">
               {{ formatTime(event.startTime) }}
             </span>
             <span
               v-if="isCurrentEvent(event)"
-              class="text-[7px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-red-500 text-white"
+              class="text-[5px] font-black uppercase tracking-wider px-1 py-px rounded-full bg-red-500 text-white"
             >
               Now
             </span>
           </div>
 
           <!-- Subject -->
-          <h3 class="text-[10px] font-bold text-[var(--dash-text)] mb-0.5 leading-tight">
+          <h3 class="text-[8px] font-bold text-[var(--dash-text)] leading-tight">
             {{ event.subject || event.summary }}
           </h3>
 
           <!-- Teacher -->
-          <div v-if="event.teacher" class="text-[8px] text-[var(--dash-text-muted)]">
+          <div v-if="event.teacher" class="text-[6px] text-[var(--dash-text-muted)] leading-tight">
             {{ event.teacher }}
           </div>
         </div>

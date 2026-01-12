@@ -1,5 +1,29 @@
 [
   {
+    "hash": "0287dc5",
+    "fullHash": "0287dc5cb983773c1686e3089820dc1864f2265d",
+    "date": "2026-01-12 15:33:18 +0100",
+    "message": "lint error fix v3"
+  },
+  {
+    "hash": "0b78516",
+    "fullHash": "0b785163d60d086e34535e2ebb1f763957d0e6ed",
+    "date": "2026-01-12 15:26:28 +0100",
+    "message": "Lint errors v2"
+  },
+  {
+    "hash": "0121046",
+    "fullHash": "0121046ef4d292011454865da044d0295c767b51",
+    "date": "2026-01-12 15:23:41 +0100",
+    "message": "Lint errors"
+  },
+  {
+    "hash": "221cbc0",
+    "fullHash": "221cbc00828d938c6bc6a395d9aa96a687ab4226",
+    "date": "2026-01-12 15:20:12 +0100",
+    "message": "Lias calender widget"
+  },
+  {
     "hash": "64db2ba",
     "fullHash": "64db2bafb23d728a61e060fc6f9ba8cfca92dc7f",
     "date": "2026-01-12 14:28:30 +0100",
@@ -94,29 +118,5 @@
     "fullHash": "c23ff66f03ce6054e6ed671837d73e51a9cf4225",
     "date": "2026-01-11 20:40:40 +0100",
     "message": "Vasttrafik UI"
-  },
-  {
-    "hash": "e1bf9e1",
-    "fullHash": "e1bf9e1d947b6dbdf649346c4a7da01017c73fb6",
-    "date": "2026-01-11 20:38:51 +0100",
-    "message": "Vasttrafik multiple stations"
-  },
-  {
-    "hash": "6f5f9ee",
-    "fullHash": "6f5f9ee25a7369c7d900b2a16eff23519da22792",
-    "date": "2026-01-11 20:27:45 +0100",
-    "message": "Vasttrafik"
-  },
-  {
-    "hash": "677191a",
-    "fullHash": "677191aaa3b5e4052990e3399e9f2dd76619a8da",
-    "date": "2026-01-11 20:03:46 +0100",
-    "message": "Alert and sizes and smaler fix"
-  },
-  {
-    "hash": "148d37d",
-    "fullHash": "148d37d872fd026a769297a88143461ec840c276",
-    "date": "2026-01-09 16:30:11 +0100",
-    "message": "Phase 5: Final hardening, theme persistence, and navigation improvements"
   }
 ]
