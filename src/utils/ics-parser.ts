@@ -19,12 +19,12 @@ export async function parseICS(icsContent: string): Promise<CalendarEvent[]> {
     let currentEvent: Partial<CalendarEvent> | null = null
 
     for (let i = 0; i < lines.length; i++) {
-        let line = lines[i].trim()
+        let line = lines[i]?.trim() || ''
 
         // Handle line continuation (lines starting with space)
-        while (i + 1 < lines.length && lines[i + 1].match(/^[ \t]/)) {
+        while (i + 1 < lines.length && lines[i + 1]?.match(/^[ \t]/)) {
             i++
-            line += lines[i].trim()
+            line += lines[i]?.trim() || ''
         }
 
         if (line === 'BEGIN:VEVENT') {
