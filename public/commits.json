@@ -1,5 +1,11 @@
 [
   {
+    "hash": "e1e9a57",
+    "fullHash": "e1e9a5766d8e262d5ca3d986c78cebc26cc08511",
+    "date": "2026-01-12 13:29:32 +0100",
+    "message": "PWA features"
+  },
+  {
     "hash": "e2559e7",
     "fullHash": "e2559e7e47d86e06bac0047b4f77478d5d2dab63",
     "date": "2026-01-11 21:59:20 +0100",
@@ -112,11 +118,5 @@
     "fullHash": "da1cc7884c2d8998dd976619a6a10d6da8812cee",
     "date": "2026-01-09 15:02:31 +0100",
     "message": "mc"
-  },
-  {
-    "hash": "1e3132c",
-    "fullHash": "1e3132c2545944414818a7697d693df03dfbd346",
-    "date": "2026-01-09 13:41:40 +0100",
-    "message": "Name change"
   }
 ]

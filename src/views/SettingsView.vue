@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
+import { useRegisterSW } from 'virtual:pwa-register/vue'
 import { useDashboardStore } from '@/stores/dashboard'
 import { useRouter } from 'vue-router'
 import { registry } from '@/widgets/registry'
@@ -8,6 +9,7 @@ import { computed, ref, onMounted } from 'vue'
 const authStore = useAuthStore()
 const dashboardStore = useDashboardStore()
 const router = useRouter()
+const { updateServiceWorker } = useRegisterSW()
 
 const availableWidgets = computed(() => registry.getAll())
 
@@ -128,73 +130,77 @@ onMounted(async () => {
           </div>
         </section>
 
-        <!-- Account Section -->
+        <!-- Updates & History Section -->
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">Updates & Build Info</h2>
+          </div>
+          <div class="bg-white/5 rounded-2xl border border-white/5 shadow-inner overflow-hidden">
+            <!-- Latest Build Info -->
+            <div class="p-4 border-b border-white/5">
+              <div class="flex items-start justify-between gap-4 mb-4">
+                <div class="space-y-1">
+                  <p class="text-xs font-bold text-[var(--dash-text)] opacity-90 leading-relaxed">{{ lastCommitMessage }}</p>
+                  <div class="flex items-center gap-3 text-[9px] uppercase tracking-wider font-bold text-[var(--dash-text-muted)]">
+                     <span>{{ commitHash }}</span>
+                     <span>{{ buildTime }}</span>
+                  </div>
+                </div>
+                <button
+                  @click="updateServiceWorker()"
+                  class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-[10px] uppercase tracking-wider font-black text-[var(--dash-text)] rounded-lg transition-all active:scale-95 whitespace-nowrap"
+                >
+                  Check Updates
+                </button>
+              </div>
+            </div>
+
+             <!-- History List -->
+             <div v-if="commitHistory.length > 0" class="max-h-40 overflow-y-auto custom-scrollbar bg-black/20">
+                <div
+                  v-for="commit in commitHistory"
+                  :key="commit.fullHash"
+                  class="p-3 border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors"
+                >
+                  <p class="text-[10px] font-medium text-[var(--dash-text)] leading-tight mb-1 opacity-80">{{ commit.message }}</p>
+                  <div class="flex items-center justify-between text-[8px] uppercase tracking-wider font-bold text-[var(--dash-text-muted)]">
+                    <span>{{ commit.hash }}</span>
+                    <span>{{ new Date(commit.date).toLocaleDateString('sv-SE') }}</span>
+                  </div>
+                </div>
+             </div>
+          </div>
+        </section>
+
+        <!-- Account Section (Moved to Bottom) -->
         <section>
           <div class="flex items-center justify-between mb-4">
             <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">Account</h2>
           </div>
-          <div class="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 shadow-inner">
-            <div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center overflow-hidden border border-white/10 shrink-0">
-               <img v-if="authStore.user?.photoURL" :src="authStore.user.photoURL" alt="Profile" class="w-full h-full object-cover">
-               <span v-else class="text-lg font-bold text-[var(--dash-text)] uppercase">{{ authStore.user?.email?.charAt(0) }}</span>
-            </div>
-            <div class="flex-grow min-w-0">
-              <p class="text-sm font-bold text-[var(--dash-text)] truncate">{{ authStore.user?.displayName || 'Family Member' }}</p>
-              <p class="text-[10px] text-[var(--dash-text-muted)] truncate tracking-tight font-medium">{{ authStore.user?.email }}</p>
-            </div>
+          <div class="p-1 bg-white/5 rounded-2xl border border-white/5 shadow-inner">
+             <div class="p-4 flex items-center gap-4 border-b border-white/5 mb-1 pb-4">
+                <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center overflow-hidden border border-white/10 shrink-0">
+                   <img v-if="authStore.user?.photoURL" :src="authStore.user.photoURL" alt="Profile" class="w-full h-full object-cover">
+                   <span v-else class="text-lg font-bold text-[var(--dash-text)] uppercase">{{ authStore.user?.email?.charAt(0) }}</span>
+                </div>
+                <div class="flex-grow min-w-0">
+                  <p class="text-sm font-bold text-[var(--dash-text)] truncate">{{ authStore.user?.displayName || 'Family Member' }}</p>
+                  <p class="text-[10px] text-[var(--dash-text-muted)] truncate tracking-tight font-medium">{{ authStore.user?.email }}</p>
+                </div>
+             </div>
+             <button
+               @click="handleLogout"
+               class="w-full py-3 text-[10px] uppercase tracking-[0.15em] font-black text-red-400 hover:bg-red-500/10 rounded-xl transition-all active:scale-[0.98] group flex items-center justify-center gap-2"
+             >
+               <span>Sign Out</span>
+               <svg class="w-3 h-3 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+               </svg>
+             </button>
           </div>
         </section>
 
-        <!-- Latest Update Section -->
-        <section>
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">Latest Build</h2>
-          </div>
-          <div class="p-4 bg-white/5 rounded-2xl border border-white/5 shadow-inner space-y-2">
-            <p class="text-xs font-bold text-[var(--dash-text)] opacity-90 leading-relaxed">{{ lastCommitMessage }}</p>
-            <div class="flex items-center justify-between text-[9px] uppercase tracking-wider font-bold text-[var(--dash-text-muted)]">
-              <span>Hash: <span class="text-[var(--dash-text)] opacity-60">{{ commitHash }}</span></span>
-              <span>Built: <span class="text-[var(--dash-text)] opacity-60">{{ buildTime }}</span></span>
-            </div>
-          </div>
-        </section>
 
-        <!-- Update History Section -->
-        <section v-if="commitHistory.length > 0">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">Update History</h2>
-          </div>
-          <div class="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
-            <div
-              v-for="commit in commitHistory"
-              :key="commit.fullHash"
-              class="p-3 bg-white/5 rounded-xl border border-white/5 flex flex-col gap-1"
-            >
-              <p class="text-[11px] font-medium text-[var(--dash-text)] leading-tight">{{ commit.message }}</p>
-              <div class="flex items-center justify-between text-[8px] uppercase tracking-wider font-bold text-[var(--dash-text-muted)]">
-                <span>{{ commit.hash }}</span>
-                <span>{{ new Date(commit.date).toLocaleDateString('sv-SE') }}</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Danger Zone -->
-        <section class="pt-6 border-t border-white/10">
-          <button
-            @click="handleLogout"
-            class="w-full py-4 text-[10px] uppercase tracking-[0.15em] font-black text-red-400 bg-red-400/5 hover:bg-red-400/10 rounded-2xl border border-red-400/10 transition-all active:scale-[0.98] shadow-lg shadow-red-900/5 group"
-          >
-            <span class="group-hover:scale-110 transition-transform inline-block">Sign Out</span>
-          </button>
-        </section>
-
-        <!-- Navigation -->
-        <section class="pt-2 text-center">
-          <router-link to="/dashboard" class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] hover:text-[var(--dash-text)] transition-all py-2 px-4 inline-block font-black active:scale-95">
-            Dismiss
-          </router-link>
-        </section>
       </div>
     </div>
   </div>
