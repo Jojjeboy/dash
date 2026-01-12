@@ -13,13 +13,13 @@ const props = defineProps<Props>()
 const gridClasses = computed(() => {
   switch (props.layoutMode) {
     case 4:
-      return 'grid-cols-2 grid-rows-2'
+      return 'grid-cols-2 auto-rows-fr'
     case 6:
-      return 'grid-cols-3 grid-rows-2'
+      return 'grid-cols-3 auto-rows-fr'
     case 8:
-      return 'grid-cols-4 grid-rows-2'
+      return 'grid-cols-4 auto-rows-fr'
     default:
-      return 'grid-cols-3 grid-rows-2'
+      return 'grid-cols-3 auto-rows-fr'
   }
 })
 
@@ -34,8 +34,9 @@ const getWidgetSpan = (widgetId: string | null) => {
 <template>
   <div class="h-full w-full p-4 md:p-6 lg:p-8 overflow-hidden">
     <div
-      class="grid gap-4 md:gap-6 lg:gap-8 h-full w-full transition-all duration-500 ease-in-out"
+      class="grid gap-4 md:gap-6 lg:gap-8 h-full w-full"
       :class="gridClasses"
+      :style="{ gridTemplateRows: `repeat(${Math.ceil(props.slots.length / (props.layoutMode === 4 ? 2 : props.layoutMode === 6 ? 3 : 4))}, minmax(0, 1fr))` }"
     >
       <WidgetSlot
         v-for="slot in props.slots"

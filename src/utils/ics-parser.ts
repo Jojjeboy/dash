@@ -49,12 +49,14 @@ export async function parseICS(icsContent: string): Promise<CalendarEvent[]> {
             } else if (field === 'SUMMARY') {
                 currentEvent.summary = value.replace(/\\,/g, ',').replace(/\\\\/g, '\\')
                 // Extract teacher from summary (e.g., "MA, LC" -> teacher: "LC")
-                const parts = currentEvent.summary.split(',').map(s => s.trim())
-                if (parts.length > 1) {
-                    currentEvent.teacher = parts[parts.length - 1]
-                    currentEvent.subject = parts.slice(0, -1).join(', ')
-                } else {
-                    currentEvent.subject = currentEvent.summary
+                if (currentEvent.summary) {
+                    const parts = currentEvent.summary.split(',').map(s => s.trim())
+                    if (parts.length > 1) {
+                        currentEvent.teacher = parts[parts.length - 1]
+                        currentEvent.subject = parts.slice(0, -1).join(', ')
+                    } else {
+                        currentEvent.subject = currentEvent.summary
+                    }
                 }
             } else if (field === 'DESCRIPTION') {
                 currentEvent.description = value.replace(/<[^>]*>/g, '').replace(/\\n/g, '\n')
