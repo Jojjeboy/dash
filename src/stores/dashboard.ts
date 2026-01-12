@@ -9,6 +9,7 @@ export interface DashboardConfig {
   layoutMode: 4 | 6 | 8
   theme: 'dark' | 'light'
   activeWidgetIds: string[]
+  calendarIcsPath?: string
   updatedAt?: FieldValue
 }
 
@@ -17,6 +18,7 @@ const DEFAULT_CONFIG: DashboardConfig = {
   layoutMode: 6,
   theme: 'dark',
   activeWidgetIds: ['timer'], // Show Timer by default in slot 1
+  calendarIcsPath: 'liakar1020@skola.goteborg.se.ics'
 }
 
 export const useDashboardStore = defineStore('dashboard', () => {
@@ -112,6 +114,10 @@ export const useDashboardStore = defineStore('dashboard', () => {
     saveConfig({ activeWidgetIds: currentIds })
   }
 
+  const updateCalendarPath = (path: string) => {
+    saveConfig({ calendarIcsPath: path })
+  }
+
   return {
     config,
     loading,
@@ -120,6 +126,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     updateLayoutMode,
     updateTheme,
     updateWidgetSlot,
+    updateCalendarPath,
     layoutMode: computed(() => {
       if (!config.value) return DEFAULT_CONFIG.layoutMode
       return config.value.layoutMode

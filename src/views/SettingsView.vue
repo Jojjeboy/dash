@@ -40,7 +40,7 @@ const loadingHistory = ref(true)
 
 onMounted(async () => {
   try {
-    const response = await fetch('/dash/commits.json')
+    const response = await fetch(`${import.meta.env.BASE_URL}commits.json`)
     if (response.ok) {
       commitHistory.value = await response.json()
     }
@@ -169,6 +169,28 @@ onMounted(async () => {
                   </div>
                 </div>
              </div>
+          </div>
+        </section>
+
+        <!-- Calendar Settings -->
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">Calendar</h2>
+          </div>
+          <div class="p-4 bg-white/5 rounded-2xl border border-white/5">
+            <label class="block text-[10px] uppercase tracking-wider font-bold text-[var(--dash-text-muted)] mb-2">
+              ICS File Path
+            </label>
+            <input
+              type="text"
+              :value="dashboardStore.config?.calendarIcsPath || 'liakar1020@skola.goteborg.se.ics'"
+              @input="(e) => dashboardStore.updateCalendarPath((e.target as HTMLInputElement).value)"
+              class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-xs text-[var(--dash-text)] placeholder-[var(--dash-text-muted)] focus:outline-none focus:border-white/20 transition-colors"
+              placeholder="liakar1020@skola.goteborg.se.ics"
+            />
+            <p class="text-[9px] text-[var(--dash-text-muted)] mt-2 italic">
+              Path to the ICS calendar file in the public folder
+            </p>
           </div>
         </section>
 

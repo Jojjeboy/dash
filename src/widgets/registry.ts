@@ -8,6 +8,7 @@ export interface WidgetDefinition {
   component: () => Promise<Component>
   settingsComponent?: () => Promise<Component>
   defaultSize?: 'small' | 'medium' | 'large'
+  size?: 'single' | 'double' // Number of grid slots the widget occupies
 }
 
 class WidgetRegistry {
@@ -34,5 +35,15 @@ registry.register({
   title: 'Trafik - Mariaplan',
   description: 'Avgångar från Mariaplan (Västtrafik)',
   component: () => import('./components/CommuteWidget.vue'),
-  defaultSize: 'medium'
+  defaultSize: 'medium',
+  size: 'single'
+})
+
+registry.register({
+  id: 'calendar_widget',
+  title: 'School Schedule',
+  description: 'Daily school schedule from calendar',
+  component: () => import('./components/CalendarWidget.vue'),
+  defaultSize: 'medium',
+  size: 'single'
 })

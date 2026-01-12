@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import WidgetSlot from './WidgetSlot.vue'
+import { registry } from '@/widgets/registry'
 
 interface Props {
   layoutMode: 4 | 6 | 8
@@ -21,6 +22,13 @@ const gridClasses = computed(() => {
       return 'grid-cols-3 grid-rows-2'
   }
 })
+
+// Determine if a widget should span 2 columns
+const getWidgetSpan = (widgetId: string | null) => {
+  if (!widgetId) return 1
+  const widget = registry.get(widgetId)
+  return widget?.size === 'double' ? 2 : 1
+}
 </script>
 
 <template>
@@ -34,6 +42,7 @@ const gridClasses = computed(() => {
         :key="slot.index"
         :widget-id="slot.widgetId"
         :index="slot.index"
+        :style="{ gridColumn: `span ${getWidgetSpan(slot.widgetId)}` }"
       />
     </div>
   </div>

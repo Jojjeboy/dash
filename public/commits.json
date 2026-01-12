@@ -1,5 +1,11 @@
 [
   {
+    "hash": "64db2ba",
+    "fullHash": "64db2bafb23d728a61e060fc6f9ba8cfca92dc7f",
+    "date": "2026-01-12 14:28:30 +0100",
+    "message": "Commits.json"
+  },
+  {
     "hash": "3349e03",
     "fullHash": "3349e03576a4f30edb1bc43fb175b095445be06f",
     "date": "2026-01-12 14:27:26 +0100",
@@ -112,11 +118,5 @@
     "fullHash": "148d37d872fd026a769297a88143461ec840c276",
     "date": "2026-01-09 16:30:11 +0100",
     "message": "Phase 5: Final hardening, theme persistence, and navigation improvements"
-  },
-  {
-    "hash": "91b5be8",
-    "fullHash": "91b5be8b7d5254e30bb14ca31829240124a9cb80",
-    "date": "2026-01-09 15:41:35 +0100",
-    "message": "Dashboard start boxes"
   }
 ]
