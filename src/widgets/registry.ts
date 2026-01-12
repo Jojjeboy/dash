@@ -41,8 +41,8 @@ registry.register({
 
 registry.register({
   id: 'calendar_widget',
-  title: 'School Schedule',
-  description: 'Daily school schedule from calendar',
+  title: 'Skolschema',
+  description: 'Dagligt skolschema från kalender',
   component: () => import('./components/CalendarWidget.vue'),
   defaultSize: 'medium',
   size: 'single'

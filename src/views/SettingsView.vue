@@ -60,13 +60,13 @@ onMounted(async () => {
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
       </router-link>
-      <h1 class="text-2xl font-bold mb-8 text-[var(--dash-text)] text-center tracking-tight">Settings</h1>
+      <h1 class="text-2xl font-bold mb-8 text-[var(--dash-text)] text-center tracking-tight">{{ $t('settings') }}</h1>
 
       <div class="space-y-8">
         <!-- Appearance Section -->
         <section>
           <div class="flex items-center justify-between mb-4">
-            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">Appearance</h2>
+            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">{{ $t('appearance') }}</h2>
           </div>
           <div class="flex gap-2 p-1 bg-white/5 rounded-2xl border border-white/5">
             <button
@@ -76,7 +76,7 @@ onMounted(async () => {
               class="flex-1 py-3 text-xs font-bold rounded-xl transition-all capitalize"
               :class="dashboardStore.theme === mode ? 'bg-white text-[#1a1c1e] shadow-lg shadow-white/5' : 'text-[var(--dash-text-muted)] hover:text-[var(--dash-text)] hover:bg-white/5'"
             >
-              {{ mode }}
+              {{ $t(mode) }}
             </button>
           </div>
         </section>
@@ -84,17 +84,17 @@ onMounted(async () => {
         <!-- Layout Section -->
         <section>
           <div class="flex items-center justify-between mb-4">
-            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">Layout Mode</h2>
+            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">{{ $t('layoutMode') }}</h2>
           </div>
           <div class="flex gap-2 p-1 bg-white/5 rounded-2xl border border-white/5">
             <button
-              v-for="mode in [4, 6, 8] as const"
+              v-for="mode in [4, 6] as const"
               :key="mode"
               @click="dashboardStore.updateLayoutMode(mode)"
               class="flex-1 py-3 text-xs font-bold rounded-xl transition-all"
               :class="dashboardStore.layoutMode === mode ? 'bg-white text-[#1a1c1e] shadow-lg shadow-white/5' : 'text-[var(--dash-text-muted)] hover:text-[var(--dash-text)] hover:bg-white/5'"
             >
-              {{ mode }} Slots
+              {{ mode }} {{ $t('slots') }}
             </button>
           </div>
         </section>
@@ -102,30 +102,46 @@ onMounted(async () => {
         <!-- Widgets Section -->
         <section>
           <div class="flex items-center justify-between mb-4">
-            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">Widgets</h2>
+            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">{{ $t('widgets') }}</h2>
           </div>
           <div class="space-y-3">
             <div
               v-for="slot in dashboardStore.slots"
               :key="slot.index"
-              class="flex items-center justify-between p-3 bg-white/5 rounded-2xl border border-white/5"
+              class="p-3 bg-white/5 rounded-2xl border border-white/5 space-y-2"
             >
-              <span class="text-[10px] uppercase tracking-widest text-[var(--dash-text-muted)] font-black">Slot {{ slot.index + 1 }}</span>
-              <select
-                :value="slot.widgetId || ''"
-                @change="(e) => dashboardStore.updateWidgetSlot(slot.index, (e.target as HTMLSelectElement).value)"
-                class="bg-transparent text-xs font-bold text-[var(--dash-text)] outline-none cursor-pointer"
-              >
-                <option value="" class="bg-[#1a1c1e] text-white">Empty</option>
-                <option
-                  v-for="widget in availableWidgets"
-                  :key="widget.id"
-                  :value="widget.id"
-                  class="bg-[#1a1c1e] text-white"
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] uppercase tracking-widest text-[var(--dash-text-muted)] font-black">{{ $t('slot') }} {{ slot.index + 1 }}</span>
+                <select
+                  :value="slot.widgetId || ''"
+                  @change="(e) => dashboardStore.updateWidgetSlot(slot.index, (e.target as HTMLSelectElement).value)"
+                  class="bg-transparent text-xs font-bold text-[var(--dash-text)] outline-none cursor-pointer"
                 >
-                  {{ widget.title }}
-                </option>
-              </select>
+                  <option value="" class="bg-[#1a1c1e] text-white">{{ $t('empty') }}</option>
+                  <option
+                    v-for="widget in availableWidgets"
+                    :key="widget.id"
+                    :value="widget.id"
+                    class="bg-[#1a1c1e] text-white"
+                  >
+                    {{ widget.title }}
+                  </option>
+                </select>
+              </div>
+              
+              <!-- Widget Name Input -->
+              <div v-if="slot.widgetId" class="pt-2 border-t border-white/5">
+                <label class="block text-[9px] uppercase tracking-wider font-bold text-[var(--dash-text-muted)] mb-1">
+                  {{ $t('customName') }}
+                </label>
+                <input
+                  type="text"
+                  :value="dashboardStore.config?.widgetNames?.[slot.index] || ''"
+                  @input="(e) => dashboardStore.updateWidgetName(slot.index, (e.target as HTMLInputElement).value)"
+                  :placeholder="availableWidgets.find(w => w.id === slot.widgetId)?.title || ''"
+                  class="w-full px-2 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs text-[var(--dash-text)] placeholder-[var(--dash-text-muted)] focus:outline-none focus:border-white/20 transition-colors"
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -133,7 +149,7 @@ onMounted(async () => {
         <!-- Updates & History Section -->
         <section>
           <div class="flex items-center justify-between mb-4">
-            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">Updates & Build Info</h2>
+            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">{{ $t('updatesAndBuildInfo') }}</h2>
           </div>
           <div class="bg-white/5 rounded-2xl border border-white/5 shadow-inner overflow-hidden">
             <!-- Latest Build Info -->
@@ -150,7 +166,7 @@ onMounted(async () => {
                   @click="updateServiceWorker()"
                   class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-[10px] uppercase tracking-wider font-black text-[var(--dash-text)] rounded-lg transition-all active:scale-95 whitespace-nowrap"
                 >
-                  Check Updates
+                  {{ $t('checkUpdates') }}
                 </button>
               </div>
             </div>
@@ -175,11 +191,11 @@ onMounted(async () => {
         <!-- Calendar Settings -->
         <section>
           <div class="flex items-center justify-between mb-4">
-            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">Calendar</h2>
+            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">{{ $t('calendar') }}</h2>
           </div>
           <div class="p-4 bg-white/5 rounded-2xl border border-white/5">
             <label class="block text-[10px] uppercase tracking-wider font-bold text-[var(--dash-text-muted)] mb-2">
-              ICS File Path
+              {{ $t('icsFilePath') }}
             </label>
             <input
               type="text"
@@ -189,7 +205,7 @@ onMounted(async () => {
               placeholder="liakar1020@skola.goteborg.se.ics"
             />
             <p class="text-[9px] text-[var(--dash-text-muted)] mt-2 italic">
-              Path to the ICS calendar file in the public folder
+              {{ $t('icsFilePathDescription') }}
             </p>
           </div>
         </section>
@@ -197,7 +213,7 @@ onMounted(async () => {
         <!-- Account Section (Moved to Bottom) -->
         <section>
           <div class="flex items-center justify-between mb-4">
-            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">Account</h2>
+            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">{{ $t('account') }}</h2>
           </div>
           <div class="p-1 bg-white/5 rounded-2xl border border-white/5 shadow-inner">
              <div class="p-4 flex items-center gap-4 border-b border-white/5 mb-1 pb-4">
@@ -206,7 +222,7 @@ onMounted(async () => {
                    <span v-else class="text-lg font-bold text-[var(--dash-text)] uppercase">{{ authStore.user?.email?.charAt(0) }}</span>
                 </div>
                 <div class="flex-grow min-w-0">
-                  <p class="text-sm font-bold text-[var(--dash-text)] truncate">{{ authStore.user?.displayName || 'Family Member' }}</p>
+                   <p class="text-sm font-bold text-[var(--dash-text)] truncate">{{ authStore.user?.displayName || $t('familyMember') }}</p>
                   <p class="text-[10px] text-[var(--dash-text-muted)] truncate tracking-tight font-medium">{{ authStore.user?.email }}</p>
                 </div>
              </div>
@@ -214,7 +230,7 @@ onMounted(async () => {
                @click="handleLogout"
                class="w-full py-3 text-[10px] uppercase tracking-[0.15em] font-black text-red-400 hover:bg-red-500/10 rounded-xl transition-all active:scale-[0.98] group flex items-center justify-center gap-2"
              >
-               <span>Sign Out</span>
+                <span>{{ $t('signOut') }}</span>
                <svg class="w-3 h-3 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                </svg>

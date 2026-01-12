@@ -176,7 +176,7 @@ onUnmounted(() => {
             class="bg-transparent text-center w-32 text-7xl font-black text-[var(--dash-text)] outline-none placeholder-[var(--dash-text-muted)] hover:text-white focus:text-white transition-colors"
             placeholder="00"
           >
-          <span class="text-xs uppercase text-[var(--dash-text-muted)] font-bold tracking-[0.2em] mt-2">min</span>
+          <span class="text-xs uppercase text-[var(--dash-text-muted)] font-bold tracking-[0.2em] mt-2">{{ $t('min') }}</span>
         </div>
 
         <div class="text-7xl font-black text-[var(--dash-text-muted)] -mt-8">:</div>
@@ -190,7 +190,7 @@ onUnmounted(() => {
             class="bg-transparent text-center w-32 text-7xl font-black text-[var(--dash-text)] outline-none placeholder-[var(--dash-text-muted)] hover:text-white focus:text-white transition-colors"
             placeholder="00"
           >
-          <span class="text-xs uppercase text-[var(--dash-text-muted)] font-bold tracking-[0.2em] mt-2">sec</span>
+          <span class="text-xs uppercase text-[var(--dash-text-muted)] font-bold tracking-[0.2em] mt-2">{{ $t('sec') }}</span>
         </div>
 
       </div>

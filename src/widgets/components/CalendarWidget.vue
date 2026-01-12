@@ -149,12 +149,12 @@ const currentTimePosition = computed(() => {
   <div ref="widgetContainer" class="h-full w-full flex flex-col glass-tile p-1.5 overflow-hidden">
     <!-- Header -->
     <div class="flex items-center justify-between mb-0.5">
-      <h2 class="text-[7px] font-bold text-[var(--dash-text)] uppercase tracking-wider">Schedule</h2>
+      <h2 class="text-[7px] font-bold text-[var(--dash-text)] uppercase tracking-wider">{{ $t('schedule') }}</h2>
       <div class="flex gap-0.5">
         <button
           @click="goToPreviousDay"
           class="p-0.5 rounded bg-white/5 hover:bg-white/10 transition-colors"
-          title="Previous Day"
+          :title="$t('previousDay')"
         >
           <svg class="w-2.5 h-2.5 text-[var(--dash-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -164,14 +164,14 @@ const currentTimePosition = computed(() => {
           @click="goToToday"
           :class="{ 'opacity-50': isToday }"
           class="px-1.5 py-0.5 rounded bg-white/5 hover:bg-white/10 transition-colors text-[7px] font-bold uppercase tracking-wider text-[var(--dash-text)]"
-          title="Today"
+          :title="$t('today')"
         >
-          Today
+          {{ $t('today') }}
         </button>
         <button
           @click="goToNextDay"
           class="p-0.5 rounded bg-white/5 hover:bg-white/10 transition-colors"
-          title="Next Day"
+          :title="$t('nextDay')"
         >
           <svg class="w-2.5 h-2.5 text-[var(--dash-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -181,15 +181,15 @@ const currentTimePosition = computed(() => {
     </div>
 
     <!-- Date Display -->
-    <div class="mb-0.5">
-      <p class="text-[7px] text-[var(--dash-text-muted)] font-medium">
-        {{ selectedDate.toLocaleDateString('sv-SE', { weekday: 'short', month: 'short', day: 'numeric' }) }}
+    <div class="mb-1 bg-white/5 rounded-lg px-2 py-1">
+      <p class="text-[9px] text-[var(--dash-text)] font-bold text-center">
+        {{ selectedDate.toLocaleDateString('sv-SE', { weekday: 'long', month: 'long', day: 'numeric' }) }}
       </p>
     </div>
 
     <!-- Loading State -->
     <div v-if="loading" class="flex-1 flex items-center justify-center">
-      <p class="text-[9px] text-[var(--dash-text-muted)]">Loading...</p>
+      <p class="text-[9px] text-[var(--dash-text-muted)]">{{ $t('loading') }}</p>
     </div>
 
     <!-- Error State -->
@@ -199,7 +199,7 @@ const currentTimePosition = computed(() => {
 
     <!-- No Events -->
     <div v-else-if="dayEvents.length === 0" class="flex-1 flex items-center justify-center">
-      <p class="text-[9px] text-[var(--dash-text-muted)] font-medium text-center">No school today!</p>
+      <p class="text-[9px] text-[var(--dash-text-muted)] font-medium text-center">{{ $t('noSchoolToday') }}</p>
     </div>
 
     <!-- Schedule Timeline -->
@@ -221,14 +221,13 @@ const currentTimePosition = computed(() => {
         <div
           v-for="event in dayEvents"
           :key="event.uid"
-          class="relative p-1 rounded border transition-all"
+          class="relative p-1 rounded transition-all"
           :class="{
-            'ring-1 ring-white/20': isCurrentEvent(event),
-            'border-white/10': !isCurrentEvent(event)
+            'ring-1 ring-white/30': isCurrentEvent(event)
           }"
           :style="{
-            backgroundColor: `${getSubjectColor(event.subject || event.summary)}15`,
-            borderColor: getSubjectColor(event.subject || event.summary)
+            backgroundColor: getSubjectColor(event.subject || event.summary),
+            opacity: isCurrentEvent(event) ? '1' : '0.85'
           }"
         >
           <!-- Time & Subject -->
@@ -240,7 +239,7 @@ const currentTimePosition = computed(() => {
               v-if="isCurrentEvent(event)"
               class="text-[5px] font-black uppercase tracking-wider px-1 py-px rounded-full bg-red-500 text-white"
             >
-              Now
+              {{ $t('now') }}
             </span>
           </div>
 

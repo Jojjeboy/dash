@@ -31,8 +31,8 @@ const close = () => {
             </svg>
           </div>
           <div class="flex-grow min-w-0">
-            <h3 class="text-sm font-bold text-[var(--dash-text)] mb-1">New version available</h3>
-            <p class="text-[10px] text-[var(--dash-text-muted)] uppercase tracking-wider font-black mb-3">Update to get the latest features</p>
+            <h3 class="text-sm font-bold text-[var(--dash-text)] mb-1">{{ $t('newVersionAvailable') }}</h3>
+            <p class="text-[10px] text-[var(--dash-text-muted)] uppercase tracking-wider font-black mb-3">{{ $t('updateToGetLatestFeatures') }}</p>
 
             <div class="p-3 bg-white/5 rounded-xl border border-white/5 mb-4">
               <p class="text-xs font-medium text-[var(--dash-text)] opacity-80 leading-relaxed italic">"{{ lastCommitMessage }}"</p>
@@ -43,13 +43,13 @@ const close = () => {
                 @click="updateServiceWorker()"
                 class="flex-1 py-2 text-[10px] uppercase tracking-wider font-black bg-white text-[#1a1c1e] rounded-lg hover:bg-white/90 transition-all active:scale-95"
               >
-                Update Now
+                {{ $t('updateNow') }}
               </button>
               <button
                 @click="close"
                 class="px-4 py-2 text-[10px] uppercase tracking-wider font-black text-[var(--dash-text-muted)] hover:text-[var(--dash-text)] transition-all"
               >
-                Later
+                {{ $t('later') }}
               </button>
             </div>
           </div>

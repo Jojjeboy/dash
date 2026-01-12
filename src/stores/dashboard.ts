@@ -6,9 +6,10 @@ import { useAuthStore } from './auth'
 
 export interface DashboardConfig {
   version: number
-  layoutMode: 4 | 6 | 8
+  layoutMode: 4 | 6
   theme: 'dark' | 'light'
   activeWidgetIds: string[]
+  widgetNames?: Record<number, string> // Maps slot index to custom name
   calendarIcsPath?: string
   updatedAt?: FieldValue
 }
@@ -94,7 +95,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     }
   }
 
-  const updateLayoutMode = (mode: 4 | 6 | 8) => {
+  const updateLayoutMode = (mode: 4 | 6) => {
     saveConfig({ layoutMode: mode })
   }
 
@@ -118,6 +119,19 @@ export const useDashboardStore = defineStore('dashboard', () => {
     saveConfig({ calendarIcsPath: path })
   }
 
+  const updateWidgetName = (index: number, name: string) => {
+    const currentNames = { ...(config.value?.widgetNames || {}) }
+
+    if (name.trim() === '') {
+      // Remove the custom name if empty
+      delete currentNames[index]
+    } else {
+      currentNames[index] = name.trim()
+    }
+
+    saveConfig({ widgetNames: currentNames })
+  }
+
   return {
     config,
     loading,
@@ -127,6 +141,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     updateTheme,
     updateWidgetSlot,
     updateCalendarPath,
+    updateWidgetName,
     layoutMode: computed(() => {
       if (!config.value) return DEFAULT_CONFIG.layoutMode
       return config.value.layoutMode

@@ -114,7 +114,7 @@ const loadData = async () => {
             {{ station.name }}
           </option>
         </select>
-        <span class="text-[var(--dash-text-muted)] text-[10px] uppercase tracking-wider font-bold mt-0.5">Departures</span>
+        <span class="text-[var(--dash-text-muted)] text-[10px] uppercase tracking-wider font-bold mt-0.5">{{ $t('departures') }}</span>
       </div>
       <button
         @click.stop="loadData"
@@ -133,7 +133,7 @@ const loadData = async () => {
       <div v-if="error" class="h-full flex flex-col items-center justify-center text-red-400 gap-2">
         <ExclamationTriangleIcon class="w-6 h-6 opacity-50" />
         <span class="text-[10px] font-bold uppercase tracking-wider">{{ error }}</span>
-        <button @click="loadData" class="text-[10px] underline opacity-75 hover:opacity-100">Try again</button>
+        <button @click="loadData" class="text-[10px] underline opacity-75 hover:opacity-100">{{ $t('tryAgain') }}</button>
       </div>
 
       <!-- Loading State (Skeleton) -->
@@ -161,7 +161,7 @@ const loadData = async () => {
                 {{ dep.serviceJourney.direction }}
               </span>
               <span class="text-[var(--dash-text-muted)] text-[9px] uppercase font-bold">
-                Platform {{ dep.stopPoint.platform }}
+                {{ $t('platform') }} {{ dep.stopPoint.platform }}
               </span>
             </div>
           </div>
@@ -184,14 +184,14 @@ const loadData = async () => {
               v-if="dep.estimatedTime"
               class="text-[9px] uppercase font-bold tracking-wider text-green-400 flex items-center gap-1 mt-0.5"
             >
-              Live
+              {{ $t('live') }}
             </span>
           </div>
         </div>
 
         <!-- Empty State -->
         <div v-if="!loading && filteredDepartures.length === 0" class="text-center py-4 text-[var(--dash-text-muted)] text-xs">
-          No upcoming departures
+          {{ $t('noUpcomingDepartures') }}
         </div>
 
       </div>

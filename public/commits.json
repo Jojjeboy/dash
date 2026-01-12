@@ -1,5 +1,11 @@
 [
   {
+    "hash": "d8bcfef",
+    "fullHash": "d8bcfef342bcda239132f1af042dd8973dd7d854",
+    "date": "2026-01-12 15:52:03 +0100",
+    "message": "Calendar UI fixes and commute fixes"
+  },
+  {
     "hash": "0287dc5",
     "fullHash": "0287dc5cb983773c1686e3089820dc1864f2265d",
     "date": "2026-01-12 15:33:18 +0100",
@@ -111,12 +117,6 @@
     "hash": "849b531",
     "fullHash": "849b53159502aee4eae36b268c511fdc588a9046",
     "date": "2026-01-11 21:03:39 +0100",
-    "message": "Vasttrafik UI"
-  },
-  {
-    "hash": "c23ff66",
-    "fullHash": "c23ff66f03ce6054e6ed671837d73e51a9cf4225",
-    "date": "2026-01-11 20:40:40 +0100",
     "message": "Vasttrafik UI"
   }
 ]
