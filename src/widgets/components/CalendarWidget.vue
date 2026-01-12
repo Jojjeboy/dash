@@ -12,9 +12,8 @@ const error = ref<string | null>(null)
 const currentTime = ref(new Date())
 
 // Update current time every minute
-let timeInterval: number | null = null
 onMounted(() => {
-  timeInterval = window.setInterval(() => {
+  window.setInterval(() => {
     currentTime.value = new Date()
   }, 60000) // Update every minute
 })
@@ -49,7 +48,7 @@ watch(() => dashboardStore.config?.calendarIcsPath, () => {
 
 // Get events for selected date
 const dayEvents = computed(() => {
-  let targetDate = new Date(selectedDate.value)
+  const targetDate = new Date(selectedDate.value)
   
   // If weekend, show Monday's schedule
   const dayOfWeek = targetDate.getDay()
@@ -62,28 +61,13 @@ const dayEvents = computed(() => {
   return getEventsForDate(events.value, targetDate)
 })
 
-// Check if it's a weekend
-const isWeekend = computed(() => {
-  const day = selectedDate.value.getDay()
-  return day === 0 || day === 6
-})
-
 // Check if selected date is today
 const isToday = computed(() => {
   const today = new Date()
   return selectedDate.value.toDateString() === today.toDateString()
 })
 
-// Format date for display
-const formattedDate = computed(() => {
-  const options: Intl.DateTimeFormatOptions = { 
-    weekday: 'long', 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
-  }
-  return selectedDate.value.toLocaleDateString('sv-SE', options)
-})
+
 
 // Navigation functions
 const goToPreviousDay = () => {

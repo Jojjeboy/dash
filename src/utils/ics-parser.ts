@@ -17,7 +17,6 @@ export async function parseICS(icsContent: string): Promise<CalendarEvent[]> {
     const lines = icsContent.split(/\r?\n/)
 
     let currentEvent: Partial<CalendarEvent> | null = null
-    let currentField = ''
 
     for (let i = 0; i < lines.length; i++) {
         let line = lines[i].trim()
