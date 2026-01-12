@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ShellLayout from '@/layouts/ShellLayout.vue'
+import ReloadPrompt from '@/components/ReloadPrompt.vue'
 import { useDashboardStore } from '@/stores/dashboard'
 import { watch } from 'vue'
 
@@ -17,4 +18,5 @@ watch(() => dashboardStore.theme, (theme) => {
 
 <template>
   <ShellLayout />
+  <ReloadPrompt />
 </template>

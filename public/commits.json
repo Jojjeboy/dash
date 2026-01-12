@@ -1,5 +1,23 @@
 [
   {
+    "hash": "e2559e7",
+    "fullHash": "e2559e7e47d86e06bac0047b4f77478d5d2dab63",
+    "date": "2026-01-11 21:59:20 +0100",
+    "message": "Commit message v4"
+  },
+  {
+    "hash": "d6e6958",
+    "fullHash": "d6e6958e557699f45c38dab9b8bd881977097ad6",
+    "date": "2026-01-11 21:57:12 +0100",
+    "message": "Commit message v2"
+  },
+  {
+    "hash": "4cd39ae",
+    "fullHash": "4cd39ae9ebb6225587cf78eca074e841d1085d48",
+    "date": "2026-01-11 21:56:24 +0100",
+    "message": "Commit message v2"
+  },
+  {
     "hash": "63eefa7",
     "fullHash": "63eefa7c5e93907ee80f4dde0fce665426388994",
     "date": "2026-01-11 21:44:37 +0100",
@@ -100,17 +118,5 @@
     "fullHash": "1e3132c2545944414818a7697d693df03dfbd346",
     "date": "2026-01-09 13:41:40 +0100",
     "message": "Name change"
-  },
-  {
-    "hash": "43404ea",
-    "fullHash": "43404ea5018b98253b2ef3267b628e843a46a144",
-    "date": "2026-01-09 13:23:27 +0100",
-    "message": "Initial"
-  },
-  {
-    "hash": "6c44435",
-    "fullHash": "6c44435905e7c4da64880fdcd76319181aed0d68",
-    "date": "2026-01-09 13:14:12 +0100",
-    "message": "first commit"
   }
 ]

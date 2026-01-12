@@ -46,13 +46,13 @@ export default defineConfig({
         orientation: 'landscape',
         icons: [
           {
-            src: 'image.png',
-            sizes: '192x192', // Will rely on browser scaling or user updating image later
+            src: 'pwa-192x192.png',
+            sizes: '192x192',
             type: 'image/png',
             purpose: 'any maskable'
           },
           {
-            src: 'image.png',
+            src: 'pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'
