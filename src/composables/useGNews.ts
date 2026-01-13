@@ -37,7 +37,8 @@ export function useGNews(options: {
 
         try {
             const category = options.category.value || 'general'
-            const url = `https://gnews.io/api/v4/top-headlines?category=${category}&lang=sv&country=se&max=${options.maxItems.value}&apikey=${API_KEY}`
+            const targetUrl = `https://gnews.io/api/v4/top-headlines?category=${category}&lang=sv&country=se&max=${options.maxItems.value}&apikey=${API_KEY}`
+            const url = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`
 
             const response = await fetch(url, { signal: abortController.signal })
             if (!response.ok) {

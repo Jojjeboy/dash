@@ -20,7 +20,7 @@ const weather = ref<WeatherData | null>(null)
 const lastUpdated = ref<Date | null>(null)
 
   
-const SMHI_URL = '/api/smhi/category/pmp3g/version/2/geotype/point/lon/11.9281/lat/57.6710/data.json'
+const SMHI_URL = 'https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/11.9281/lat/57.6710/data.json'
 
 // Mapping SMHI Wsymb2 codes to emojis/descriptions
 // 1-27 scale. Simplified mapping.

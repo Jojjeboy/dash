@@ -1,5 +1,41 @@
 [
   {
+    "hash": "842c9b1",
+    "fullHash": "842c9b1079abeea3c612d2349ddcb420d12f8bbb",
+    "date": "2026-01-13 13:37:19 +0100",
+    "message": "Scroll issue and heght fix"
+  },
+  {
+    "hash": "17c278e",
+    "fullHash": "17c278e0dbe4bd8a5c09da87064f2aa3bb0cba8f",
+    "date": "2026-01-13 13:06:17 +0100",
+    "message": "G-news"
+  },
+  {
+    "hash": "cfd04a4",
+    "fullHash": "cfd04a4f48834116570f64e1eba9a7fe56633cde",
+    "date": "2026-01-13 12:22:22 +0100",
+    "message": "UI fixes"
+  },
+  {
+    "hash": "69000b0",
+    "fullHash": "69000b0c6d6afe986ff96f8ff2baa0c0f37fbd7a",
+    "date": "2026-01-13 12:10:46 +0100",
+    "message": "Split widgets"
+  },
+  {
+    "hash": "1983d2a",
+    "fullHash": "1983d2a088f6167f7e7d7cbcdc4f2c95e66104bb",
+    "date": "2026-01-13 11:50:27 +0100",
+    "message": "Calendar fix"
+  },
+  {
+    "hash": "5eb54c7",
+    "fullHash": "5eb54c77ed932af37f1845fc3a96df7db5a8a757",
+    "date": "2026-01-13 11:29:51 +0100",
+    "message": "SMHI fix"
+  },
+  {
     "hash": "bd8c460",
     "fullHash": "bd8c46038e3dbff780ff25faa2f6cd98cdf8f1d0",
     "date": "2026-01-13 09:58:03 +0100",
@@ -82,41 +118,5 @@
     "fullHash": "63eefa7c5e93907ee80f4dde0fce665426388994",
     "date": "2026-01-11 21:44:37 +0100",
     "message": "Commit message"
-  },
-  {
-    "hash": "6bea9fe",
-    "fullHash": "6bea9fe6af25c17e97add25919e39d605e06904e",
-    "date": "2026-01-11 21:35:37 +0100",
-    "message": "mc fix again"
-  },
-  {
-    "hash": "6f17965",
-    "fullHash": "6f179651f3efab129be59a5477b2f32ce3246702",
-    "date": "2026-01-11 21:35:03 +0100",
-    "message": "mc fix"
-  },
-  {
-    "hash": "8034105",
-    "fullHash": "80341050b9ffc49bd8e3de79ec078d0046790cd7",
-    "date": "2026-01-11 21:32:15 +0100",
-    "message": "mc"
-  },
-  {
-    "hash": "436d14a",
-    "fullHash": "436d14a2f3445b2ade6e583352b50163a720f366",
-    "date": "2026-01-11 21:24:43 +0100",
-    "message": "PWA update  alert"
-  },
-  {
-    "hash": "55c490f",
-    "fullHash": "55c490ff131d7a410353d00283537fa4f5429385",
-    "date": "2026-01-11 21:19:41 +0100",
-    "message": "new alert"
-  },
-  {
-    "hash": "70a8f89",
-    "fullHash": "70a8f89fb8e45241071aee607b4aa48bfb2664d3",
-    "date": "2026-01-11 21:08:15 +0100",
-    "message": "More UI fixes"
   }
 ]
