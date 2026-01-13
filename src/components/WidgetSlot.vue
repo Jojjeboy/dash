@@ -65,7 +65,7 @@ const widgetConfigs = computed(() => {
         v-if="config.id && config.name"
         class="absolute top-2 left-0 right-0 text-center z-10 pointer-events-none"
       >
-        <span class="text-[8px] uppercase tracking-[0.15em] text-[var(--dash-text-muted)] font-bold opacity-60">
+        <span class="text-[13px] uppercase tracking-[0.15em] text-[var(--dash-text)] font-extrabold">
           {{ config.name }}
         </span>
       </div>

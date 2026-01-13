@@ -96,29 +96,32 @@ const loadData = async () => {
 <template>
   <div class="h-full w-full flex flex-col p-3 relative overflow-hidden">
     <!-- Header -->
-    <div class="flex items-center justify-between mb-2 z-10">
+    <div class="flex items-center justify-between mb-3 z-10 px-1">
       <div class="flex flex-col">
         <!-- Station Selector -->
-        <select
-          v-model="selectedGid"
-          @change="changeStation"
-          @click.stop
-          class="text-[var(--dash-text)] font-bold text-base leading-none bg-transparent border-none outline-none cursor-pointer hover:text-white transition-colors w-auto"
-        >
-          <option
-            v-for="station in STATIONS"
-            :key="station.gid"
-            :value="station.gid"
-            class="bg-[var(--dash-bg)] text-[var(--dash-text)]"
+        <div class="relative flex items-center group/select">
+          <select
+            v-model="selectedGid"
+            @change="changeStation"
+            @click.stop
+            class="appearance-none pr-6 text-[var(--dash-text)] font-black text-xl leading-none bg-transparent border-none outline-none cursor-pointer hover:text-white transition-colors w-auto"
           >
-            {{ station.name }}
-          </option>
-        </select>
-        <span class="text-[var(--dash-text-muted)] text-[10px] uppercase tracking-wider font-bold mt-0.5">{{ $t('departures') }}</span>
+            <option
+              v-for="station in STATIONS"
+              :key="station.gid"
+              :value="station.gid"
+              class="bg-[var(--dash-bg)] text-[var(--dash-text)]"
+            >
+              {{ station.name }}
+            </option>
+          </select>
+          <ChevronDownIcon class="w-4 h-4 text-[var(--dash-text-muted)] absolute right-0 pointer-events-none group-hover/select:text-white transition-colors" />
+        </div>
+        <span class="text-[var(--dash-text-muted)] text-[11px] uppercase tracking-wider font-bold mt-1">{{ $t('departures') }}</span>
       </div>
       <button
         @click.stop="loadData"
-        class="text-[var(--dash-text-muted)] hover:text-white transition-colors p-1"
+        class="text-[var(--dash-text-muted)] hover:text-white transition-colors p-1.5 bg-white/5 rounded-lg"
         :class="{ 'animate-spin': loading }"
         title="Refresh"
       >

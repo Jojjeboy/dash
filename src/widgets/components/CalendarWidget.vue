@@ -192,15 +192,15 @@ const formatTimeRange = (start: Date, end: Date) => {
 <template>
   <div ref="widgetContainer" class="h-full w-full flex flex-col glass-tile p-1.5 overflow-hidden">
     <!-- Header -->
-    <div class="flex items-center justify-between mb-0.5">
-      <h2 class="text-[7px] font-bold text-[var(--dash-text)] uppercase tracking-wider">{{ $t('schedule') }}</h2>
-      <div class="flex gap-0.5">
+    <div class="flex items-center justify-between mb-2 z-10">
+      <h2 class="text-[13px] font-extrabold text-[var(--dash-text)] uppercase tracking-wider">{{ $t('schedule') }}</h2>
+      <div class="flex gap-1">
         <button
           @click="goToPreviousDay"
-          class="p-0.5 rounded bg-white/5 hover:bg-white/10 transition-colors"
+          class="p-1 rounded bg-white/5 hover:bg-white/10 transition-colors"
           :title="$t('previousDay')"
         >
-          <svg class="w-2.5 h-2.5 text-[var(--dash-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="w-3.5 h-3.5 text-[var(--dash-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
@@ -214,10 +214,10 @@ const formatTimeRange = (start: Date, end: Date) => {
         </button>
         <button
           @click="goToNextDay"
-          class="p-0.5 rounded bg-white/5 hover:bg-white/10 transition-colors"
+          class="p-1 rounded bg-white/5 hover:bg-white/10 transition-colors"
           :title="$t('nextDay')"
         >
-          <svg class="w-2.5 h-2.5 text-[var(--dash-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="w-3.5 h-3.5 text-[var(--dash-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
         </button>
@@ -225,8 +225,8 @@ const formatTimeRange = (start: Date, end: Date) => {
     </div>
 
     <!-- Date Display -->
-    <div class="mb-1 bg-white/5 rounded-lg px-2 py-1">
-      <p class="text-[9px] text-[var(--dash-text)] font-bold text-center">
+    <div class="mb-3 bg-white/5 rounded-xl px-3 py-1.5 mt-1">
+      <p class="text-[12px] text-[var(--dash-text)] font-extrabold text-center capitalize">
         {{ selectedDate.toLocaleDateString('sv-SE', { weekday: 'long', month: 'long', day: 'numeric' }) }}
       </p>
     </div>
@@ -287,26 +287,24 @@ const formatTimeRange = (start: Date, end: Date) => {
             }"
             :style="getEventStyle(event)"
           >
-            <!-- Time Range -->
-            <div class="flex items-start justify-between gap-1 mb-0.5">
-              <span class="text-[10px] font-bold text-[var(--dash-text)] leading-tight whitespace-nowrap">
+            <!-- Time & Subject -->
+            <div class="flex items-start flex-wrap gap-x-2 gap-y-0.5">
+              <span class="text-[12px] font-black text-[var(--dash-text)] leading-tight whitespace-nowrap">
                 {{ formatTimeRange(event.startTime, event.endTime) }}
               </span>
+              <h3 class="text-[14px] font-extrabold text-[var(--dash-text)] leading-tight">
+                {{ event.subject || event.summary }}
+              </h3>
               <span
                 v-if="isCurrentEvent(event)"
-                class="text-[7px] font-black uppercase tracking-wider px-1 py-0.5 rounded-full bg-red-500 text-white flex-shrink-0"
+                class="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-red-500 text-white flex-shrink-0"
               >
                 {{ $t('now') }}
               </span>
             </div>
 
-            <!-- Subject -->
-            <h3 class="text-[12px] font-bold text-[var(--dash-text)] leading-tight mb-0.5 break-words">
-              {{ event.subject || event.summary }}
-            </h3>
-
             <!-- Teacher -->
-            <div v-if="event.teacher" class="text-[9px] text-[var(--dash-text-muted)] leading-tight">
+            <div v-if="event.teacher" class="text-[11px] text-[var(--dash-text-muted)] font-bold">
               {{ event.teacher }}
             </div>
           </div>
