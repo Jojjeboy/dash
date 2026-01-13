@@ -10,7 +10,7 @@ const selectedDate = ref(new Date())
 const loading = ref(true)
 const error = ref<string | null>(null)
 const currentTime = ref(new Date())
-const widgetContainer = ref<HTMLElement | null>(null)
+const scrollContainer = ref<HTMLElement | null>(null)
 
 // Update current time every minute
 onMounted(() => {
@@ -18,7 +18,15 @@ onMounted(() => {
     currentTime.value = new Date()
   }, 60000) // Update every minute
   
-  // Log container dimensions for debugging - REMOVED
+  // Scroll to current time or first event
+  setTimeout(() => {
+    if (scrollContainer.value && currentTimePosition.value !== null) {
+      scrollContainer.value.scrollTo({
+        top: currentTimePosition.value - 100,
+        behavior: 'smooth'
+      })
+    }
+  }, 1000)
 })
 
 // Load ICS file
@@ -117,25 +125,68 @@ const isCurrentEvent = (event: CalendarEvent) => {
   return now >= event.startTime.getTime() && now <= event.endTime.getTime()
 }
 
-// Calculate position for current time indicator
+// Timeline configuration (school hours: 08:00 - 16:00)
+const TIMELINE_START_HOUR = 8
+const TIMELINE_END_HOUR = 16
+const TIMELINE_HOURS = TIMELINE_END_HOUR - TIMELINE_START_HOUR
+const HOUR_HEIGHT = 80 // pixels per hour
+const TOTAL_HEIGHT = TIMELINE_HOURS * HOUR_HEIGHT
+
+// Generate timeline hours
+const timelineHours = computed(() => {
+  const hours = []
+  for (let hour = TIMELINE_START_HOUR; hour <= TIMELINE_END_HOUR; hour++) {
+    hours.push(hour)
+  }
+  return hours
+})
+
+// Calculate position for current time indicator (based on fixed timeline)
 const currentTimePosition = computed(() => {
-  if (!isToday.value || dayEvents.value.length === 0) return null
+  if (!isToday.value) return null
   
   const now = currentTime.value
-  const firstEvent = dayEvents.value[0]
-  const lastEvent = dayEvents.value[dayEvents.value.length - 1]
+  const hours = now.getHours()
+  const minutes = now.getMinutes()
   
-  if (!firstEvent || !lastEvent) return null
+  // Check if current time is within timeline hours
+  if (hours < TIMELINE_START_HOUR || hours >= TIMELINE_END_HOUR) return null
   
-  const dayStart = firstEvent.startTime.getTime()
-  const dayEnd = lastEvent.endTime.getTime()
-  const currentTimeMs = now.getTime()
+  // Calculate minutes since timeline start
+  const minutesSinceStart = (hours - TIMELINE_START_HOUR) * 60 + minutes
+  const totalMinutes = TIMELINE_HOURS * 60
   
-  if (currentTimeMs < dayStart || currentTimeMs > dayEnd) return null
-  
-  const percentage = ((currentTimeMs - dayStart) / (dayEnd - dayStart)) * 100
-  return Math.min(Math.max(percentage, 0), 100)
+  return (minutesSinceStart / totalMinutes) * TOTAL_HEIGHT
 })
+
+// Calculate event style based on timeline
+const getEventStyle = (event: CalendarEvent) => {
+  const start = event.startTime
+  const end = event.endTime
+  
+  const startTotalMinutes = (start.getHours() - TIMELINE_START_HOUR) * 60 + start.getMinutes()
+  const endTotalMinutes = (end.getHours() - TIMELINE_START_HOUR) * 60 + end.getMinutes()
+  const totalMinutes = TIMELINE_HOURS * 60
+  
+  const top = (startTotalMinutes / totalMinutes) * TOTAL_HEIGHT
+  const height = ((endTotalMinutes - startTotalMinutes) / totalMinutes) * TOTAL_HEIGHT
+  
+  return {
+    position: 'absolute' as const,
+    top: `${top}px`,
+    height: `${height}px`,
+    left: '42px', // Leave space for time labels
+    right: '4px',
+    backgroundColor: getSubjectColor(event.subject || event.summary),
+    opacity: isCurrentEvent(event) ? '1' : '0.85',
+    zIndex: isCurrentEvent(event) ? 10 : 1
+  }
+}
+
+// Format time range
+const formatTimeRange = (start: Date, end: Date) => {
+  return `${formatTime(start)} - ${formatTime(end)}`
+}
 </script>
 
 <template>
@@ -196,54 +247,80 @@ const currentTimePosition = computed(() => {
     </div>
 
     <!-- Schedule Timeline -->
-    <div v-else class="flex-1 overflow-y-auto custom-scrollbar pr-1 relative">
-      <!-- Current Time Indicator -->
-      <div
-        v-if="currentTimePosition !== null"
-        class="absolute left-0 right-0 z-10 pointer-events-none"
-        :style="{ top: `${currentTimePosition}%` }"
-      >
-        <div class="flex items-center">
-          <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div>
-          <div class="flex-1 h-px bg-red-500"></div>
-        </div>
-      </div>
-
-      <!-- Events -->
-      <div class="space-y-0.5">
-        <div
-          v-for="event in dayEvents"
-          :key="event.uid"
-          class="relative p-1 rounded transition-all"
-          :class="{
-            'ring-1 ring-white/30': isCurrentEvent(event)
-          }"
-          :style="{
-            backgroundColor: getSubjectColor(event.subject || event.summary),
-            opacity: isCurrentEvent(event) ? '1' : '0.85'
-          }"
-        >
-          <!-- Time & Subject -->
-          <div class="flex items-start justify-between gap-0.5">
-            <span class="text-[6px] font-bold text-[var(--dash-text)] uppercase tracking-wide">
-              {{ formatTime(event.startTime) }}
-            </span>
-            <span
-              v-if="isCurrentEvent(event)"
-              class="text-[5px] font-black uppercase tracking-wider px-1 py-px rounded-full bg-red-500 text-white"
-            >
-              {{ $t('now') }}
-            </span>
+    <div v-else ref="scrollContainer" class="flex-1 overflow-y-auto custom-scrollbar relative">
+      <div class="relative" :style="{ height: `${TOTAL_HEIGHT}px`, minWidth: '100%' }">
+        <!-- Timeline Labels (Left Side) -->
+        <div class="absolute left-0 top-0 bottom-0 w-10 pointer-events-none">
+          <div
+            v-for="hour in timelineHours"
+            :key="hour"
+            class="absolute left-0 right-0 text-[10px] text-[var(--dash-text-muted)] font-medium text-center"
+            :style="{
+              top: `${((hour - TIMELINE_START_HOUR) / TIMELINE_HOURS) * TOTAL_HEIGHT}px`,
+              transform: 'translateY(-50%)'
+            }"
+          >
+            {{ String(hour).padStart(2, '0') }}:00
           </div>
+        </div>
 
-          <!-- Subject -->
-          <h3 class="text-[8px] font-bold text-[var(--dash-text)] leading-tight">
-            {{ event.subject || event.summary }}
-          </h3>
+        <!-- Timeline Grid Lines -->
+        <div class="absolute left-10 right-0 top-0 bottom-0 pointer-events-none">
+          <div
+            v-for="hour in timelineHours"
+            :key="`line-${hour}`"
+            class="absolute left-0 right-0 border-t border-white/10"
+            :style="{
+              top: `${((hour - TIMELINE_START_HOUR) / TIMELINE_HOURS) * TOTAL_HEIGHT}px`
+            }"
+          />
+        </div>
 
-          <!-- Teacher -->
-          <div v-if="event.teacher" class="text-[6px] text-[var(--dash-text-muted)] leading-tight">
-            {{ event.teacher }}
+        <!-- Events Container -->
+        <div class="absolute inset-0 pointer-events-none">
+          <div
+            v-for="event in dayEvents"
+            :key="event.uid"
+            class="rounded-lg px-2 py-1 transition-all pointer-events-auto overflow-hidden"
+            :class="{
+              'ring-2 ring-white/60 shadow-lg': isCurrentEvent(event)
+            }"
+            :style="getEventStyle(event)"
+          >
+            <!-- Time Range -->
+            <div class="flex items-start justify-between gap-1 mb-0.5">
+              <span class="text-[10px] font-bold text-[var(--dash-text)] leading-tight whitespace-nowrap">
+                {{ formatTimeRange(event.startTime, event.endTime) }}
+              </span>
+              <span
+                v-if="isCurrentEvent(event)"
+                class="text-[7px] font-black uppercase tracking-wider px-1 py-0.5 rounded-full bg-red-500 text-white flex-shrink-0"
+              >
+                {{ $t('now') }}
+              </span>
+            </div>
+
+            <!-- Subject -->
+            <h3 class="text-[12px] font-bold text-[var(--dash-text)] leading-tight mb-0.5 break-words">
+              {{ event.subject || event.summary }}
+            </h3>
+
+            <!-- Teacher -->
+            <div v-if="event.teacher" class="text-[9px] text-[var(--dash-text-muted)] leading-tight">
+              {{ event.teacher }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Current Time Indicator -->
+        <div
+          v-if="currentTimePosition !== null"
+          class="absolute left-0 right-0 z-30 pointer-events-none"
+          :style="{ top: `${currentTimePosition}px` }"
+        >
+          <div class="flex items-center -translate-y-1/2">
+            <div class="w-2.5 h-2.5 rounded-full bg-red-500 shadow-sm border border-white/20" style="margin-left: 36px;"></div>
+            <div class="flex-1 h-0.5 bg-red-500 shadow-sm"></div>
           </div>
         </div>
       </div>

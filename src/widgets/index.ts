@@ -10,13 +10,6 @@ registry.register({
 })
 
 registry.register({
-  id: 'weather',
-  title: 'Weather',
-  component: () => import('./components/WeatherWidget.vue'),
-  defaultSize: 'small'
-})
-
-registry.register({
   id: 'smhi-weather',
   title: 'SMHI Weather',
   component: () => import('./components/SmhiWidget.vue'),
