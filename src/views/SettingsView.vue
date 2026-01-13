@@ -4,7 +4,7 @@ import { useRegisterSW } from 'virtual:pwa-register/vue'
 import { useDashboardStore } from '@/stores/dashboard'
 import { useRouter } from 'vue-router'
 import { registry } from '@/widgets/registry'
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, defineAsyncComponent } from 'vue'
 
 const authStore = useAuthStore()
 const dashboardStore = useDashboardStore()
@@ -21,6 +21,8 @@ const handleLogout = async () => {
     console.error('Logout failed:', error)
   }
 }
+const NewsWidgetSettings = defineAsyncComponent(() => import('@/widgets/components/GNewsWidgetSettings.vue'))
+
 const lastCommitMessage = __LAST_COMMIT_MESSAGE__
 const commitHash = __COMMIT_HASH__
 const buildTime = new Date(__BUILD_TIME__).toLocaleString('sv-SE', {
@@ -84,7 +86,7 @@ const getNameKey = (slotIndex: number, subIndex: number, isSplit: boolean): stri
 </script>
 
 <template>
-  <div class="h-full w-full flex flex-col items-center justify-center p-8 bg-[var(--dash-bg)] transition-colors duration-700">
+  <div class="h-full w-full flex flex-col items-center p-8 bg-[var(--dash-bg)] transition-colors duration-700 overflow-y-auto">
     <div class="max-w-md w-full glass-tile p-8 relative">
       <router-link to="/dashboard" class="absolute top-8 left-8 text-[var(--dash-text-muted)] hover:text-[var(--dash-text)] transition-all">
         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -192,6 +194,14 @@ const getNameKey = (slotIndex: number, subIndex: number, isSplit: boolean): stri
               </div>
             </div>
           </div>
+        </section>
+
+        <!-- News Settings -->
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">Nyheter (Sveriges Radio)</h2>
+          </div>
+          <NewsWidgetSettings />
         </section>
 
         <!-- Updates & History Section -->

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { getDepartures, STATIONS, type Departure } from '@/services/vasttrafik'
-import { ArrowPathIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline'
+import { ArrowPathIcon, ExclamationTriangleIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
 
 const departures = ref<Departure[]>([])
 const loading = ref(true)

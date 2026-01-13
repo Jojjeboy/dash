@@ -15,3 +15,10 @@ registry.register({
   component: () => import('./components/SmhiWidget.vue'),
   defaultSize: 'medium'
 })
+
+registry.register({
+  id: 'gnews',
+  title: 'Gnews',
+  component: () => import('./components/GNewsWidget.vue'),
+  size: 'single'
+})

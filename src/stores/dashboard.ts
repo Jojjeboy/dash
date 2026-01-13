@@ -11,6 +11,11 @@ export interface DashboardConfig {
   activeWidgetIds: string[] // Stored as 'id1' or 'id1|id2' for split slots
   widgetNames?: Record<string, string> // Maps slot index or "index-subindex" to custom name
   calendarIcsPath?: string
+  newsConfig: {
+    maxItems: number
+    refreshIntervalMinutes: number
+    defaultCategory?: string
+  }
   updatedAt?: FieldValue
 }
 
@@ -19,7 +24,12 @@ const DEFAULT_CONFIG: DashboardConfig = {
   layoutMode: 6,
   theme: 'dark',
   activeWidgetIds: ['timer'], // Show Timer by default in slot 1
-  calendarIcsPath: 'liakar1020@skola.goteborg.se.ics'
+  calendarIcsPath: 'liakar1020@skola.goteborg.se.ics',
+  newsConfig: {
+    maxItems: 5,
+    refreshIntervalMinutes: 30,
+    defaultCategory: undefined
+  }
 }
 
 export const useDashboardStore = defineStore('dashboard', () => {
@@ -132,6 +142,20 @@ export const useDashboardStore = defineStore('dashboard', () => {
     saveConfig({ calendarIcsPath: path })
   }
 
+  const updateNewsConfig = (newConfig: Partial<DashboardConfig['newsConfig']>) => {
+    const currentConfig = config.value?.newsConfig || {
+      maxItems: 5,
+      refreshIntervalMinutes: 30,
+      defaultCategory: undefined
+    }
+    saveConfig({
+      newsConfig: {
+        ...currentConfig,
+        ...newConfig
+      }
+    })
+  }
+
   const updateWidgetName = (key: string, name: string) => {
     const currentNames = { ...(config.value?.widgetNames || {}) }
 
@@ -154,6 +178,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     updateTheme,
     updateWidgetSlot,
     updateCalendarPath,
+    updateNewsConfig,
     updateWidgetName,
     layoutMode: computed(() => {
       if (!config.value) return DEFAULT_CONFIG.layoutMode
