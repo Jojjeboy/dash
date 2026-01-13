@@ -50,6 +50,37 @@ onMounted(async () => {
     loadingHistory.value = false
   }
 })
+
+const toggleSplit = (index: number, currentWidgetId: string | string[] | null) => {
+  if (Array.isArray(currentWidgetId)) {
+    // Merge: Keep the first widget
+    dashboardStore.updateWidgetSlot(index, currentWidgetId[0] || '')
+  } else {
+    // Split: Keep current widget as first, second is empty
+    dashboardStore.updateWidgetSlot(index, [currentWidgetId || '', ''])
+  }
+}
+
+const handleWidgetChange = (slotIndex: number, subIndex: number, newWidgetId: string, isSplit: boolean) => {
+  if (isSplit) {
+    const slot = dashboardStore.slots.find(s => s.index === slotIndex)
+    const currentSlotIds = (slot && Array.isArray(slot.widgetId))
+      ? [...slot.widgetId] 
+      : [(slot?.widgetId as string) || '', '']
+    
+    // Ensure array is at least 2 elements long
+    while (currentSlotIds.length < 2) currentSlotIds.push('')
+    
+    currentSlotIds[subIndex] = newWidgetId
+    dashboardStore.updateWidgetSlot(slotIndex, currentSlotIds)
+  } else {
+    dashboardStore.updateWidgetSlot(slotIndex, newWidgetId)
+  }
+}
+
+const getNameKey = (slotIndex: number, subIndex: number, isSplit: boolean): string => {
+  return isSplit ? `${slotIndex}-${subIndex}` : `${slotIndex}`
+}
 </script>
 
 <template>
@@ -108,39 +139,56 @@ onMounted(async () => {
             <div
               v-for="slot in dashboardStore.slots"
               :key="slot.index"
-              class="p-3 bg-white/5 rounded-2xl border border-white/5 space-y-2"
+              class="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-4"
             >
               <div class="flex items-center justify-between">
                 <span class="text-[10px] uppercase tracking-widest text-[var(--dash-text-muted)] font-black">{{ $t('slot') }} {{ slot.index + 1 }}</span>
-                <select
-                  :value="slot.widgetId || ''"
-                  @change="(e) => dashboardStore.updateWidgetSlot(slot.index, (e.target as HTMLSelectElement).value)"
-                  class="bg-transparent text-xs font-bold text-[var(--dash-text)] outline-none cursor-pointer"
+                <button 
+                  @click="toggleSplit(slot.index, slot.widgetId)"
+                  class="text-[9px] uppercase tracking-widest font-bold px-2 py-1 rounded bg-white/5 hover:bg-white/10 transition-colors"
                 >
-                  <option value="" class="bg-[#1a1c1e] text-white">{{ $t('empty') }}</option>
-                  <option
-                    v-for="widget in availableWidgets"
-                    :key="widget.id"
-                    :value="widget.id"
-                    class="bg-[#1a1c1e] text-white"
-                  >
-                    {{ widget.title }}
-                  </option>
-                </select>
+                  {{ Array.isArray(slot.widgetId) ? $t('mergeSlot') : $t('splitSlot') }}
+                </button>
               </div>
-              
-              <!-- Widget Name Input -->
-              <div v-if="slot.widgetId" class="pt-2 border-t border-white/5">
-                <label class="block text-[9px] uppercase tracking-wider font-bold text-[var(--dash-text-muted)] mb-1">
-                  {{ $t('customName') }}
-                </label>
-                <input
-                  type="text"
-                  :value="dashboardStore.config?.widgetNames?.[slot.index] || ''"
-                  @input="(e) => dashboardStore.updateWidgetName(slot.index, (e.target as HTMLInputElement).value)"
-                  :placeholder="availableWidgets.find(w => w.id === slot.widgetId)?.title || ''"
-                  class="w-full px-2 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs text-[var(--dash-text)] placeholder-[var(--dash-text-muted)] focus:outline-none focus:border-white/20 transition-colors"
-                />
+
+              <!-- Widget Selection(s) -->
+              <div class="space-y-4">
+                <div v-for="idx in (Array.isArray(slot.widgetId) ? [0, 1] : [0])" :key="idx" class="space-y-2">
+                  <div class="flex items-center justify-between gap-4">
+                    <span v-if="Array.isArray(slot.widgetId)" class="text-[9px] uppercase tracking-wider text-[var(--dash-text-muted)] font-bold">
+                      {{ idx === 0 ? $t('widgets') + ' 1' : $t('widgets') + ' 2' }}
+                    </span>
+                    <select
+                      :value="Array.isArray(slot.widgetId) ? slot.widgetId[idx] : (slot.widgetId || '')"
+                      @change="(e) => handleWidgetChange(slot.index, idx, (e.target as HTMLSelectElement).value, Array.isArray(slot.widgetId))"
+                      class="flex-1 bg-transparent text-xs font-bold text-[var(--dash-text)] outline-none cursor-pointer text-right"
+                    >
+                      <option value="" class="bg-[#1a1c1e] text-white">{{ $t('empty') }}</option>
+                      <option
+                        v-for="widget in availableWidgets"
+                        :key="widget.id"
+                        :value="widget.id"
+                        class="bg-[#1a1c1e] text-white"
+                      >
+                        {{ widget.title }}
+                      </option>
+                    </select>
+                  </div>
+                  
+                  <!-- Widget Name Input -->
+                  <div v-if="(Array.isArray(slot.widgetId) ? slot.widgetId[idx] : slot.widgetId)" class="pl-4 border-l border-white/5 space-y-1">
+                    <label class="block text-[8px] uppercase tracking-wider font-bold text-[var(--dash-text-muted)]">
+                      {{ $t('customName') }}
+                    </label>
+                    <input
+                      type="text"
+                      :value="dashboardStore.config?.widgetNames?.[getNameKey(slot.index, idx, Array.isArray(slot.widgetId))] || ''"
+                      @input="(e) => dashboardStore.updateWidgetName(getNameKey(slot.index, idx, Array.isArray(slot.widgetId)), (e.target as HTMLInputElement).value)"
+                      :placeholder="availableWidgets.find(w => w.id === (Array.isArray(slot.widgetId) ? slot.widgetId[idx] : slot.widgetId))?.title || ''"
+                      class="w-full px-2 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs text-[var(--dash-text)] placeholder-[var(--dash-text-muted)] focus:outline-none focus:border-white/20 transition-colors"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>

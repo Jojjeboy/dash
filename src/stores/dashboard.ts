@@ -8,8 +8,8 @@ export interface DashboardConfig {
   version: number
   layoutMode: 4 | 6
   theme: 'dark' | 'light'
-  activeWidgetIds: string[]
-  widgetNames?: Record<number, string> // Maps slot index to custom name
+  activeWidgetIds: string[] // Stored as 'id1' or 'id1|id2' for split slots
+  widgetNames?: Record<string, string> // Maps slot index or "index-subindex" to custom name
   calendarIcsPath?: string
   updatedAt?: FieldValue
 }
@@ -32,12 +32,20 @@ export const useDashboardStore = defineStore('dashboard', () => {
   const slots = computed(() => {
     const activeConfig = config.value || DEFAULT_CONFIG
     const count = activeConfig.layoutMode
-    const widgetIds = activeConfig.activeWidgetIds || []
+    const rawWidgetIds = activeConfig.activeWidgetIds || []
 
-    return Array.from({ length: count }, (_, i) => ({
-      index: i,
-      widgetId: widgetIds[i] || null
-    }))
+    return Array.from({ length: count }, (_, i) => {
+      const rawId = rawWidgetIds[i] || null
+      // Parse split slots (stored as 'id1|id2')
+      const widgetId = (typeof rawId === 'string' && rawId.includes('|'))
+        ? rawId.split('|')
+        : (rawId || null)
+
+      return {
+        index: i,
+        widgetId,
+      }
+    })
   })
 
   // Load config from Firestore
@@ -103,7 +111,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     saveConfig({ theme })
   }
 
-  const updateWidgetSlot = (index: number, widgetId: string | null) => {
+  const updateWidgetSlot = (index: number, widgetId: string | string[] | null) => {
     const currentIds = [...(config.value?.activeWidgetIds || DEFAULT_CONFIG.activeWidgetIds)]
 
     // Ensure the array is long enough
@@ -111,7 +119,12 @@ export const useDashboardStore = defineStore('dashboard', () => {
       currentIds.push('')
     }
 
-    currentIds[index] = widgetId || ''
+    // Serialize split slots to string before saving to Firebase
+    const serializedId = Array.isArray(widgetId)
+      ? widgetId.join('|')
+      : (widgetId || '')
+
+    currentIds[index] = serializedId
     saveConfig({ activeWidgetIds: currentIds })
   }
 
@@ -119,14 +132,14 @@ export const useDashboardStore = defineStore('dashboard', () => {
     saveConfig({ calendarIcsPath: path })
   }
 
-  const updateWidgetName = (index: number, name: string) => {
+  const updateWidgetName = (key: string, name: string) => {
     const currentNames = { ...(config.value?.widgetNames || {}) }
 
     if (name.trim() === '') {
       // Remove the custom name if empty
-      delete currentNames[index]
+      delete currentNames[key]
     } else {
-      currentNames[index] = name.trim()
+      currentNames[key] = name.trim()
     }
 
     saveConfig({ widgetNames: currentNames })

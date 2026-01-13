@@ -40,6 +40,9 @@ const messages = {
     familyMember: 'Family Member',
     widgetName: 'Widget Name',
     customName: 'Custom Name',
+    splitSlot: 'Split Slot',
+    mergeSlot: 'Merge Slot',
+    secondWidget: 'Second Widget',
 
     // Calendar Widget
     schedule: 'Schedule',
@@ -112,6 +115,9 @@ const messages = {
     familyMember: 'Familjemedlem',
     widgetName: 'Widget-namn',
     customName: 'Anpassat Namn',
+    splitSlot: 'Dela Plats',
+    mergeSlot: 'Slå ihop Plats',
+    secondWidget: 'Andra Widget',
 
     // Calendar Widget
     schedule: 'Schema',

@@ -5,7 +5,7 @@ import { registry } from '@/widgets/registry'
 
 interface Props {
   layoutMode: 4 | 6 | 8
-  slots: { index: number; widgetId: string | null }[]
+  slots: { index: number; widgetId: string | string[] | null }[]
 }
 
 const props = defineProps<Props>()
@@ -24,8 +24,8 @@ const gridClasses = computed(() => {
 })
 
 // Determine if a widget should span 2 columns
-const getWidgetSpan = (widgetId: string | null) => {
-  if (!widgetId) return 1
+const getWidgetSpan = (widgetId: string | string[] | null) => {
+  if (!widgetId || Array.isArray(widgetId)) return 1
   const widget = registry.get(widgetId)
   return widget?.size === 'double' ? 2 : 1
 }
@@ -39,7 +39,7 @@ const getWidgetSpan = (widgetId: string | null) => {
       :style="{ gridTemplateRows: `repeat(${Math.ceil(props.slots.length / (props.layoutMode === 4 ? 2 : props.layoutMode === 6 ? 3 : 4))}, minmax(0, 1fr))` }"
     >
       <WidgetSlot
-        v-for="slot in props.slots"
+        v-for="slot in props.slots.slice(0, props.layoutMode)"
         :key="slot.index"
         :widget-id="slot.widgetId"
         :index="slot.index"

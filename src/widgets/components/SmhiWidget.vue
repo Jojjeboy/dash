@@ -147,7 +147,7 @@ const formatDate = (dateStr: string) => {
   checkDate.setHours(0, 0, 0, 0)
 
   if (checkDate.getTime() === tomorrow.getTime()) return 'Imorgon'
-  if (checkDate.getTime() === dayAfterTomorrow.getTime()) return 'Överimorgon'
+  if (checkDate.getTime() === dayAfterTomorrow.getTime()) return 'Övermorgon'
 
   return d.toLocaleDateString('sv-SE', { weekday: 'short', day: 'numeric' })
 }
