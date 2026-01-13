@@ -63,15 +63,18 @@ const widgetConfigs = computed(() => {
       <!-- Widget Name Display -->
       <div 
         v-if="config.id && config.name"
-        class="absolute top-2 left-0 right-0 text-center z-10 pointer-events-none"
+        class="absolute top-3 left-0 right-0 text-center z-10 pointer-events-none"
       >
-        <span class="text-[13px] uppercase tracking-[0.15em] text-[var(--dash-text)] font-extrabold">
+        <span class="text-[11px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">
           {{ config.name }}
         </span>
       </div>
 
       <!-- Slot Content -->
-      <div class="h-full w-full flex items-center justify-center overflow-hidden">
+      <div 
+        class="h-full w-full flex items-center justify-center overflow-hidden"
+        :class="[config.name ? 'pt-7' : '']"
+      >
         <component
           :is="config.component"
           v-if="config.component"

@@ -32,9 +32,9 @@ const getWidgetSpan = (widgetId: string | string[] | null) => {
 </script>
 
 <template>
-  <div class="h-full w-full p-4 md:p-6 lg:p-8 overflow-hidden">
+  <div class="h-full w-full p-2 md:p-3 lg:p-4 overflow-hidden">
     <div
-      class="grid gap-4 md:gap-6 lg:gap-8 h-full w-full"
+      class="grid gap-2 md:gap-3 lg:gap-4 h-full w-full"
       :class="gridClasses"
       :style="{ gridTemplateRows: `repeat(${Math.ceil(props.slots.length / (props.layoutMode === 4 ? 2 : props.layoutMode === 6 ? 3 : 4))}, minmax(0, 1fr))` }"
     >
@@ -43,6 +43,7 @@ const getWidgetSpan = (widgetId: string | string[] | null) => {
         :key="slot.index"
         :widget-id="slot.widgetId"
         :index="slot.index"
+        class="min-h-0"
         :style="{ gridColumn: `span ${getWidgetSpan(slot.widgetId)}` }"
       />
     </div>

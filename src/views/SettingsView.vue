@@ -86,8 +86,8 @@ const getNameKey = (slotIndex: number, subIndex: number, isSplit: boolean): stri
 </script>
 
 <template>
-  <div class="h-full w-full flex flex-col items-center p-8 bg-[var(--dash-bg)] transition-colors duration-700 overflow-y-auto">
-    <div class="max-w-md w-full glass-tile p-8 relative">
+  <div class="h-full w-full flex flex-col p-4 md:p-8 bg-[var(--dash-bg)] transition-colors duration-700 overflow-y-auto">
+    <div class="max-w-md w-full mx-auto glass-tile p-6 md:p-8 relative">
       <router-link to="/dashboard" class="absolute top-8 left-8 text-[var(--dash-text-muted)] hover:text-[var(--dash-text)] transition-all">
         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />

@@ -22,13 +22,13 @@
 body {
   background-color: var(--dash-bg);
   color: var(--dash-text);
-  @apply overflow-hidden transition-colors duration-700 ease-in-out;
+  @apply h-screen w-screen overflow-hidden transition-colors duration-700 ease-in-out;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   user-select: none;
 }
 
 #app {
-  @apply min-h-screen flex flex-col;
+  @apply h-full w-full flex flex-col overflow-hidden;
 }
 
 /* Glassmorphism utility for tiles */

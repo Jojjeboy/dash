@@ -95,16 +95,15 @@ const loadData = async () => {
 
 <template>
   <div class="h-full w-full flex flex-col p-3 relative overflow-hidden">
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-3 z-10 px-1">
-      <div class="flex flex-col">
+    <div class="flex items-center justify-between z-10 px-1">
+      <div class="flex items-center gap-2">
         <!-- Station Selector -->
         <div class="relative flex items-center group/select">
           <select
             v-model="selectedGid"
             @change="changeStation"
             @click.stop
-            class="appearance-none pr-6 text-[var(--dash-text)] font-black text-xl leading-none bg-transparent border-none outline-none cursor-pointer hover:text-white transition-colors w-auto"
+            class="appearance-none pr-5 text-[var(--dash-text)] font-black text-sm leading-none bg-transparent border-none outline-none cursor-pointer hover:text-white transition-colors w-auto"
           >
             <option
               v-for="station in STATIONS"
@@ -115,17 +114,16 @@ const loadData = async () => {
               {{ station.name }}
             </option>
           </select>
-          <ChevronDownIcon class="w-4 h-4 text-[var(--dash-text-muted)] absolute right-0 pointer-events-none group-hover/select:text-white transition-colors" />
+          <ChevronDownIcon class="w-3 h-3 text-[var(--dash-text-muted)] absolute right-0 pointer-events-none group-hover/select:text-white transition-colors" />
         </div>
-        <span class="text-[var(--dash-text-muted)] text-[11px] uppercase tracking-wider font-bold mt-1">{{ $t('departures') }}</span>
       </div>
       <button
         @click.stop="loadData"
-        class="text-[var(--dash-text-muted)] hover:text-white transition-colors p-1.5 bg-white/5 rounded-lg"
+        class="text-[var(--dash-text-muted)] hover:text-white transition-colors p-1 bg-white/5 rounded-lg"
         :class="{ 'animate-spin': loading }"
         title="Refresh"
       >
-        <ArrowPathIcon class="w-4 h-4" />
+        <ArrowPathIcon class="w-3.5 h-3.5" />
       </button>
     </div>
 

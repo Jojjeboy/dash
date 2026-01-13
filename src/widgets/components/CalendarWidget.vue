@@ -192,15 +192,14 @@ const formatTimeRange = (start: Date, end: Date) => {
 <template>
   <div ref="widgetContainer" class="h-full w-full flex flex-col glass-tile p-1.5 overflow-hidden">
     <!-- Header -->
-    <div class="flex items-center justify-between mb-2 z-10">
-      <h2 class="text-[13px] font-extrabold text-[var(--dash-text)] uppercase tracking-wider">{{ $t('schedule') }}</h2>
+    <div class="flex items-center justify-end z-10">
       <div class="flex gap-1">
         <button
           @click="goToPreviousDay"
           class="p-1 rounded bg-white/5 hover:bg-white/10 transition-colors"
           :title="$t('previousDay')"
         >
-          <svg class="w-3.5 h-3.5 text-[var(--dash-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="w-3 h-3 text-[var(--dash-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
@@ -217,7 +216,7 @@ const formatTimeRange = (start: Date, end: Date) => {
           class="p-1 rounded bg-white/5 hover:bg-white/10 transition-colors"
           :title="$t('nextDay')"
         >
-          <svg class="w-3.5 h-3.5 text-[var(--dash-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="w-3 h-3 text-[var(--dash-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
         </button>
