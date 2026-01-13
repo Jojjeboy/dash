@@ -81,6 +81,20 @@ export default defineConfig({
     }),
   ],
   base: '/dash/',
+  server: {
+    proxy: {
+      '^/dash/api/smhi': {
+        target: 'https://opendata-download-metfcst.smhi.se',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/dash\/api\/smhi/, '/api')
+      },
+      '^/api/smhi': {
+        target: 'https://opendata-download-metfcst.smhi.se',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/smhi/, '/api')
+      }
+    }
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

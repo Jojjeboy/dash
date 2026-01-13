@@ -17,8 +17,10 @@ interface WeatherData {
 const loading = ref(true)
 const error = ref<string | null>(null)
 const weather = ref<WeatherData | null>(null)
+const lastUpdated = ref<Date | null>(null)
 
-const SMHI_URL = 'https://opendata.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/11.9281/lat/57.6710/data.json'
+  
+const SMHI_URL = '/api/smhi/category/pmp3g/version/2/geotype/point/lon/11.9281/lat/57.6710/data.json'
 
 // Mapping SMHI Wsymb2 codes to emojis/descriptions
 // 1-27 scale. Simplified mapping.
@@ -41,6 +43,7 @@ const fetchWeather = async () => {
     
     const data = await response.json()
     processData(data)
+    lastUpdated.value = new Date()
   } catch (e) {
     error.value = 'Could not load weather'
     console.error(e)
@@ -131,6 +134,21 @@ const processData = (data: SmhiResponse) => {
 
 const formatDate = (dateStr: string) => {
   const d = new Date(dateStr)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  
+  const tomorrow = new Date(today)
+  tomorrow.setDate(tomorrow.getDate() + 1)
+  
+  const dayAfterTomorrow = new Date(today)
+  dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2)
+
+  const checkDate = new Date(d)
+  checkDate.setHours(0, 0, 0, 0)
+
+  if (checkDate.getTime() === tomorrow.getTime()) return 'Imorgon'
+  if (checkDate.getTime() === dayAfterTomorrow.getTime()) return 'Överimorgon'
+
   return d.toLocaleDateString('sv-SE', { weekday: 'short', day: 'numeric' })
 }
 
@@ -174,6 +192,11 @@ onMounted(() => {
             <span class="opacity-50 text-[10px] self-end">{{ day.min }}°</span>
           </div>
         </div>
+      </div>
+
+      <!-- Last Updated -->
+      <div v-if="lastUpdated" class="w-full text-[10px] opacity-30 text-center mt-2">
+        Uppdaterat {{ lastUpdated.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' }) }}
       </div>
     </div>
   </div>

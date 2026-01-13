@@ -18,14 +18,7 @@ onMounted(() => {
     currentTime.value = new Date()
   }, 60000) // Update every minute
   
-  // Log container dimensions for debugging
-  if (widgetContainer.value) {
-    const rect = widgetContainer.value.getBoundingClientRect()
-    console.log('📐 Calendar Widget Container Dimensions:')
-    console.log(`   Width: ${rect.width}px (${rect.width.toFixed(0)}px)`)
-    console.log(`   Height: ${rect.height}px (${rect.height.toFixed(0)}px)`)
-    console.log(`   Available space: ${rect.width.toFixed(0)}px × ${rect.height.toFixed(0)}px`)
-  }
+  // Log container dimensions for debugging - REMOVED
 })
 
 // Load ICS file

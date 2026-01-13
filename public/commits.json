@@ -1,5 +1,11 @@
 [
   {
+    "hash": "bd8c460",
+    "fullHash": "bd8c46038e3dbff780ff25faa2f6cd98cdf8f1d0",
+    "date": "2026-01-13 09:58:03 +0100",
+    "message": "smhi widget"
+  },
+  {
     "hash": "493e9c4",
     "fullHash": "493e9c4b768dd8e4aa6e552f3f581c9f95d2cf93",
     "date": "2026-01-12 16:22:23 +0100",
@@ -112,11 +118,5 @@
     "fullHash": "70a8f89fb8e45241071aee607b4aa48bfb2664d3",
     "date": "2026-01-11 21:08:15 +0100",
     "message": "More UI fixes"
-  },
-  {
-    "hash": "f583c57",
-    "fullHash": "f583c57310210ed3792f3cc483b235535a765a62",
-    "date": "2026-01-11 21:06:44 +0100",
-    "message": "More UI"
   }
 ]
