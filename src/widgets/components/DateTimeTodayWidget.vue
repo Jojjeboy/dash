@@ -12,7 +12,9 @@ const timeStr = ref('')
 const dateStr = ref('')
 const nameDays = ref<string[]>([])
 const historyEvent = ref<{ year: number; text: string } | null>(null)
+const allHistoryEvents = ref<{ year: number; text: string }[]>([])
 const isLoadingHistory = ref(false)
+const showFullHistory = ref(false)
 
 // Timer State
 const showTimer = ref(false)
@@ -80,8 +82,9 @@ const fetchHistory = async () => {
 
     if (rawText) {
       const events = parseWikipediaText(rawText)
+      allHistoryEvents.value = events
       if (events.length > 0) {
-        // Pick a random event
+        // Pick a random event for the preview box
         const randomEvent = events[Math.floor(Math.random() * events.length)]
         if (randomEvent) {
           historyEvent.value = randomEvent
@@ -278,45 +281,87 @@ const alignmentClass = computed(() => {
     </div>
 
     <!-- Mode: Info (History/Names/Time) -->
-    <div v-if="!showTimer" class="flex-1 grid grid-cols-2 grid-rows-2 gap-3 transition-opacity duration-300">
-        <!-- Box 1: Time (Large) -->
-        <div class="bg-white/5 rounded-2xl flex flex-col items-center justify-center p-4 relative overflow-hidden group">
-            <div class="text-7xl font-black tracking-tighter opacity-90 font-mono transition-transform group-hover:scale-110 duration-700">
-                {{ timeStr }}
+    <div v-if="!showTimer" class="flex-1 flex flex-col min-h-0 relative transition-opacity duration-300">
+        <!-- Grid View -->
+        <div v-if="!showFullHistory" class="flex-1 grid grid-cols-2 grid-rows-2 gap-3 h-full">
+            <!-- Box 1: Time (Large) -->
+            <div class="bg-white/5 rounded-2xl flex flex-col items-center justify-center p-4 relative overflow-hidden group">
+                <div class="text-7xl font-black tracking-tighter opacity-90 font-mono transition-transform group-hover:scale-110 duration-700">
+                    {{ timeStr }}
+                </div>
+                <div class="text-[10px] uppercase tracking-[0.3em] opacity-30 mt-2 font-black">Klockan</div>
             </div>
-            <div class="text-[10px] uppercase tracking-[0.3em] opacity-30 mt-2 font-black">Klockan</div>
-        </div>
 
-        <!-- Box 2: Date & Week -->
-        <div class="bg-white/5 rounded-2xl flex flex-col items-center justify-center p-4 text-center">
-            <div class="text-xl font-bold opacity-80 capitalize mb-1">{{ dateStr.split(' ')[0] }}</div>
-            <div class="text-3xl font-black opacity-90 mb-1">{{ dateStr.split(' ').slice(1).join(' ') }}</div>
-            <div class="px-3 py-1 bg-white/10 rounded-full text-[10px] font-black uppercase tracking-widest opacity-60">
-                Vecka {{ weekNum }}
-            </div>
-        </div>
-
-        <!-- Box 3: Namnsdag -->
-        <div class="bg-white/5 rounded-2xl flex flex-col items-center justify-center p-4 text-center">
-            <div class="text-[10px] uppercase tracking-widest opacity-30 mb-2 font-black">Namnsdag</div>
-            <div class="text-lg font-medium opacity-80 leading-tight">
-                {{ nameDays.length ? nameDays.join('\n') : 'Ingen uppgift' }}
-            </div>
-        </div>
-
-        <!-- Box 4: History -->
-        <div class="bg-white/5 rounded-2xl flex flex-col items-start justify-center p-5 text-left relative overflow-hidden">
-            <div v-if="historyEvent" class="flex flex-col h-full justify-center">
-                <div class="text-[10px] uppercase tracking-widest opacity-30 mb-2 font-black">Hände {{ historyEvent.year }}</div>
-                <div class="text-xs leading-relaxed opacity-70 line-clamp-4 font-medium italic">
-                    "{{ historyEvent.text }}"
+            <!-- Box 2: Date & Week -->
+            <div class="bg-white/5 rounded-2xl flex flex-col items-center justify-center p-4 text-center">
+                <div class="text-xl font-bold opacity-80 capitalize mb-1">{{ dateStr.split(' ')[0] }}</div>
+                <div class="text-3xl font-black opacity-90 mb-1">{{ dateStr.split(' ').slice(1).join(' ') }}</div>
+                <div class="px-3 py-1 bg-white/10 rounded-full text-[10px] font-black uppercase tracking-widest opacity-60">
+                    Vecka {{ weekNum }}
                 </div>
             </div>
-            <div v-else class="text-xs opacity-20 italic">Hämtar historik...</div>
-            
-            <!-- Decorative Year Background -->
-            <div v-if="historyEvent" class="absolute -bottom-2 -right-2 text-6xl font-black opacity-[0.03] select-none pointer-events-none">
-                {{ historyEvent.year }}
+
+            <!-- Box 3: Namnsdag -->
+            <div class="bg-white/5 rounded-2xl flex flex-col items-center justify-center p-4 text-center">
+                <div class="text-[10px] uppercase tracking-widest opacity-30 mb-2 font-black">Namnsdag</div>
+                <div class="text-lg font-medium opacity-80 leading-tight">
+                    {{ nameDays.length ? nameDays.join('\n') : 'Ingen uppgift' }}
+                </div>
+            </div>
+
+            <!-- Box 4: History (Clickable) -->
+            <div 
+                @click="showFullHistory = true"
+                class="bg-white/5 rounded-2xl flex flex-col items-start justify-center p-5 text-left relative overflow-hidden cursor-pointer hover:bg-white/10 transition-colors group"
+            >
+                <div v-if="historyEvent" class="flex flex-col h-full justify-center">
+                    <div class="text-[10px] uppercase tracking-widest opacity-30 mb-2 font-black flex justify-between w-full">
+                        <span>Hände {{ historyEvent.year }}</span>
+                        <span class="opacity-0 group-hover:opacity-100 transition-opacity">Visa alla →</span>
+                    </div>
+                    <div class="text-xs leading-relaxed opacity-70 line-clamp-4 font-medium italic">
+                        "{{ historyEvent.text }}"
+                    </div>
+                </div>
+                <div v-else class="text-xs opacity-20 italic">Hämtar historik...</div>
+                
+                <!-- Decorative Year Background -->
+                <div v-if="historyEvent" class="absolute -bottom-2 -right-2 text-6xl font-black opacity-[0.03] select-none pointer-events-none group-hover:opacity-[0.06] transition-opacity">
+                    {{ historyEvent.year }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Full History View -->
+        <div v-else class="flex-1 bg-white/5 rounded-2xl flex flex-col min-h-0 overflow-hidden animate-in fade-in zoom-in duration-300">
+            <div class="p-4 border-b border-white/5 flex justify-between items-center bg-white/5">
+                <div>
+                     <div class="text-[10px] uppercase tracking-[0.3em] opacity-40 font-black mb-1">Historiska Händelser</div>
+                     <div class="text-xs font-bold opacity-70">{{ dateStr }}</div>
+                </div>
+                <button 
+                    @click="showFullHistory = false"
+                    class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-[10px] font-black uppercase tracking-widest transition-all active:scale-95"
+                >
+                    Stäng
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto min-h-0 p-4 custom-scrollbar">
+
+                <div v-if="allHistoryEvents.length" class="space-y-6">
+                    <div 
+                        v-for="(ev, idx) in allHistoryEvents" 
+                        :key="idx"
+                        class="relative pl-6 border-l border-white/10"
+                    >
+                        <div class="absolute w-2 h-2 rounded-full bg-white/20 -left-[4.5px] top-1.5"></div>
+                        <div class="text-xs font-black opacity-40 mb-1 tracking-wider">{{ ev.year }}</div>
+                        <div class="text-sm leading-relaxed opacity-80 font-medium italic">"{{ ev.text }}"</div>
+                    </div>
+                </div>
+                <div v-else class="h-full flex items-center justify-center opacity-30 italic text-sm">
+                    {{ isLoadingHistory ? 'Laddar händelser...' : 'Inga fler händelser hittades för denna dag.' }}
+                </div>
             </div>
         </div>
     </div>
@@ -371,5 +416,27 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes animate-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-in {
+  animation: animate-in 0.3s ease-out forwards;
 }
 </style>

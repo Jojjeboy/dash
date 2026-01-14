@@ -1,5 +1,11 @@
 [
   {
+    "hash": "3704392",
+    "fullHash": "37043928fd5849013b9b9e0ed7c422919b62b641",
+    "date": "2026-01-14 11:40:05 +0100",
+    "message": "Layout fixes"
+  },
+  {
     "hash": "c7e8f7d",
     "fullHash": "c7e8f7d5847c17cc0a57c65d4277bec186613133",
     "date": "2026-01-14 11:23:41 +0100",
@@ -112,11 +118,5 @@
     "fullHash": "e1e9a5766d8e262d5ca3d986c78cebc26cc08511",
     "date": "2026-01-12 13:29:32 +0100",
     "message": "PWA features"
-  },
-  {
-    "hash": "e2559e7",
-    "fullHash": "e2559e7e47d86e06bac0047b4f77478d5d2dab63",
-    "date": "2026-01-11 21:59:20 +0100",
-    "message": "Commit message v4"
   }
 ]
