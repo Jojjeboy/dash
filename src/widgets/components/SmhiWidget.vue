@@ -24,17 +24,17 @@ useScreenHealth({
   }
 })
 
+interface DailyWeather {
+  date: string
+  min: number
+  max: number
+  symbol: number
+  precip: number
+  windGust: number
+}
+
 interface WeatherData {
-  current: {
-    temp: number
-    symbol: number
-  }
-  forecast: Array<{
-    date: string
-    min: number
-    max: number
-    symbol: number
-  }>
+  days: DailyWeather[]
 }
 
 const loading = ref(true)
@@ -128,21 +128,7 @@ const processData = (data: SmhiResponse) => {
   const timeSeries = data.timeSeries
   if (!timeSeries || timeSeries.length === 0) return
 
-  // Current weather (first valid entry)
-  // Parameters: t = temp, wsymb2 = symbol
-  // Current weather (first valid entry)
-  const currentEntry = timeSeries[0]
-  if (!currentEntry) return
-
-  const currentTempParam = currentEntry.parameters.find((p) => p.name === 't')
-  const currentSymbolParam = currentEntry.parameters.find((p) => p.name === 'Wsymb2')
-
-  const current = {
-    temp: Math.round(currentTempParam?.values[0] || 0),
-    symbol: currentSymbolParam?.values[0] || 1
-  }
-
-  // Forecast: Group by day
+  // Group by day
   const dailyGroups: Record<string, SmhiTimeSeriesEntry[]> = {}
   
   timeSeries.forEach((entry) => {
@@ -154,40 +140,66 @@ const processData = (data: SmhiResponse) => {
     dailyGroups[date]?.push(entry)
   })
 
-  // Get next 3 days (excluding today if existing or just next few distinct days)
   const sortedDates = Object.keys(dailyGroups).sort()
-  // We include today in forecast or not? Request said "Short forecast for coming days".
-  // Let's skip the first date if it's strictly "today" and we already show current, 
-  // but to be safe and simple let's just show next 3 distinct entries including or after today.
-  // Actually usually current is today, so forecast is usually tomorrow+.
-  // Let's take the NEXT 3 days.
-  const today = new Date().toISOString().split('T')[0] ?? ''
-  const forecastDates = sortedDates.filter(d => d > today).slice(0, 3)
+  // Take today + next 3 days = 4 days total
+  const targetDates = sortedDates.slice(0, 4)
 
-  const forecast = forecastDates.map(date => {
+  const days = targetDates.map(date => {
     const entries = dailyGroups[date]
     if (!entries) return null
 
+    // Temps
     const temps = entries.flatMap(e => e.parameters.find((p) => p.name === 't')?.values || [])
-    if (temps.length === 0) return null
-
     const min = Math.round(Math.min(...temps))
     const max = Math.round(Math.max(...temps))
-    
-    // Pick symbol from noon (approx middle of array)
+
+    // Symbol (noon)
     const noonIndex = Math.floor(entries.length / 2)
     const symbolParam = entries[noonIndex]?.parameters.find((p) => p.name === 'Wsymb2')
     const symbol = symbolParam?.values[0] || 1
 
+    // Wind Gust (max)
+    const gusts = entries.flatMap(e => e.parameters.find((p) => p.name === 'gust')?.values || [])
+    const windGust = gusts.length ? Math.round(Math.max(...gusts)) : 0
+
+    // Precip (pmean * duration)
+    // Calculate duration for each entry
+    let totalPrecip = 0
+    for (let i = 0; i < entries.length; i++) {
+        const entry = entries[i]
+        if (!entry) continue
+        const pmean = entry.parameters.find(p => p.name === 'pmean')?.values[0] || 0
+        if (pmean > 0) {
+            // Determine duration of this step. 
+            // Default to 1 hour if last entry, or diff to next entry
+            // But we need to check the full timeSeries to find the next validTime, 
+            // because dailyGroups is split.
+            // Simplified: SMHI usually provides hourly data for near term.
+            // Let's look slightly more robust:
+            const currentT = new Date(entry.validTime).getTime()
+            // Find this entry in the main list to see next entry
+            const originalIndex = timeSeries.findIndex(e => e === entry)
+            const nextEntry = timeSeries[originalIndex + 1]
+            let durationHours = 1
+            if (nextEntry) {
+                const nextT = new Date(nextEntry.validTime).getTime()
+                durationHours = (nextT - currentT) / (1000 * 60 * 60)
+            }
+            totalPrecip += pmean * durationHours
+        }
+    }
+    
     return {
-      date, // YYYY-MM-DD
+      date,
       min,
       max,
-      symbol
+      symbol,
+      precip: Math.round(totalPrecip * 10) / 10, // Round to 1 decimal
+      windGust
     }
   }).filter((item): item is NonNullable<typeof item> => item !== null)
 
-  weather.value = { current, forecast }
+  weather.value = { days }
 }
 
 const formatDate = (dateStr: string) => {
@@ -227,35 +239,74 @@ onMounted(() => {
     </div>
 
     <!-- Content -->
-    <div v-else-if="weather" class="w-full h-full flex flex-col">
+    <div v-if="weather && weather.days.length" class="w-full h-full flex flex-col">
       <!-- 2x2 Grid -->
       <div class="flex-1 grid grid-cols-2 grid-rows-2 gap-2">
-        <!-- Today (Current) -->
-        <div class="bg-white/5 rounded-lg flex flex-col items-center justify-center p-3 relative">
-          <div class="text-xs uppercase tracking-widest opacity-40 font-bold absolute top-2 left-0 right-0 text-center">Idag</div>
-          <div class="text-4xl mb-1">{{ getSymbolIcon(weather.current.symbol) }}</div>
-          <div class="text-3xl font-bold tracking-tighter">{{ weather.current.temp }}°</div>
-          <div class="text-[10px] uppercase tracking-wider opacity-50 font-medium mt-0.5">
-            {{ getSymbolText(weather.current.symbol) }}
+        <!-- Today (Index 0) -->
+        <div class="bg-white/5 rounded-lg flex flex-col items-center p-3 relative" v-if="weather.days[0]">
+          <div class="text-xs uppercase tracking-widest opacity-40 font-bold w-full text-center mb-1">Idag</div>
+          
+          <div class="flex-1 flex flex-col items-center justify-center w-full gap-1">
+            <div class="flex items-center gap-3">
+                <div class="text-5xl drop-shadow-sm">{{ getSymbolIcon(weather.days[0].symbol) }}</div>
+                <div class="flex flex-col">
+                    <span class="text-4xl font-black tracking-tighter leading-none">{{ weather.days[0].max }}°</span>
+                    <span class="text-sm opacity-50 leading-none font-bold mt-0.5">{{ weather.days[0].min }}°</span>
+                </div>
+            </div>
+            
+            <div class="text-[10px] uppercase tracking-widest opacity-40 font-black text-center line-clamp-1 mt-1">
+              {{ getSymbolText(weather.days[0].symbol) }}
+            </div>
+          </div>
+
+          <!-- Bottom Row: Precip & Wind -->
+          <div class="flex w-full justify-between items-center text-[10px] opacity-60 px-1 mt-1 font-bold">
+              <div class="flex items-center gap-1" title="Total nederbörd">
+                  <span>💧</span>
+                  <span>{{ weather.days[0].precip }}</span>
+              </div>
+              <div class="flex items-center gap-1" title="Max vindby">
+                  <span>💨</span>
+                  <span>{{ weather.days[0].windGust }}</span>
+              </div>
           </div>
         </div>
 
-        <!-- Forecast Days (up to 3) -->
+        <!-- Forecast Days (Next 3) -->
         <div 
-          v-for="day in weather.forecast.slice(0, 3)" 
+          v-for="day in weather.days.slice(1)" 
           :key="day.date"
-          class="bg-white/5 rounded-lg flex flex-col items-center justify-center p-3 relative"
+          class="bg-white/5 rounded-lg flex flex-col items-center p-3 relative"
         >
-          <div class="text-xs uppercase tracking-widest opacity-40 font-bold absolute top-2 left-0 right-0 text-center">
+          <div class="text-xs uppercase tracking-widest opacity-40 font-bold w-full text-center mb-1">
             {{ formatDate(day.date) }}
           </div>
-          <div class="text-3xl mb-1">{{ getSymbolIcon(day.symbol) }}</div>
-          <div class="flex gap-1.5 items-baseline font-mono">
-            <span class="text-2xl font-bold tracking-tight">{{ day.max }}°</span>
-            <span class="text-sm opacity-50">{{ day.min }}°</span>
+          
+          <div class="flex-1 flex flex-col items-center justify-center w-full gap-1">
+            <div class="flex items-center gap-3">
+               <div class="text-5xl drop-shadow-sm">{{ getSymbolIcon(day.symbol) }}</div>
+               <div class="flex flex-col">
+                  <span class="text-4xl font-black tracking-tighter leading-none">{{ day.max }}°</span>
+                  <span class="text-sm opacity-50 leading-none font-bold mt-0.5">{{ day.min }}°</span>
+               </div>
+            </div>
+
+            <div class="text-[10px] uppercase tracking-widest opacity-40 font-black text-center line-clamp-1 w-full overflow-hidden mt-1">
+              {{ getSymbolText(day.symbol) }}
+            </div>
           </div>
-          <div class="text-[10px] uppercase tracking-wider opacity-50 font-medium mt-0.5">
-            {{ getSymbolText(day.symbol) }}
+
+           <!-- Bottom Row: Precip & Wind -->
+          <div class="flex w-full justify-between items-center text-[10px] opacity-60 px-1 mt-1 font-bold">
+              <div class="flex items-center gap-1">
+                  <span>💧</span>
+                  <span>{{ day.precip }}</span>
+              </div>
+              <div class="flex items-center gap-1">
+                  <span>💨</span>
+                  <span>{{ day.windGust }}</span>
+              </div>
           </div>
         </div>
       </div>
