@@ -92,6 +92,11 @@ export default defineConfig({
         target: 'https://opendata-download-metfcst.smhi.se',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/smhi/, '/api')
+      },
+      '^/api/gnews': {
+        target: 'https://gnews.io/api/v4',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/gnews/, '')
       }
     }
   },

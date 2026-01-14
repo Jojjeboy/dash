@@ -22,3 +22,11 @@ registry.register({
   component: () => import('./components/GNewsWidget.vue'),
   size: 'single'
 })
+
+registry.register({
+  id: 'datetime-today',
+  title: 'Date & Time',
+  description: 'Current time, name days, and history',
+  component: () => import('./components/DateTimeTodayWidget.vue'),
+  defaultSize: 'large'
+})

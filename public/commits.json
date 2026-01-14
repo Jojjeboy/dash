@@ -1,5 +1,11 @@
 [
   {
+    "hash": "261e4f2",
+    "fullHash": "261e4f2411df2ded89f5e40dbd1b04f6455686f5",
+    "date": "2026-01-13 14:04:28 +0100",
+    "message": "Bugfix"
+  },
+  {
     "hash": "842c9b1",
     "fullHash": "842c9b1079abeea3c612d2349ddcb420d12f8bbb",
     "date": "2026-01-13 13:37:19 +0100",
@@ -112,11 +118,5 @@
     "fullHash": "4cd39ae9ebb6225587cf78eca074e841d1085d48",
     "date": "2026-01-11 21:56:24 +0100",
     "message": "Commit message v2"
-  },
-  {
-    "hash": "63eefa7",
-    "fullHash": "63eefa7c5e93907ee80f4dde0fce665426388994",
-    "date": "2026-01-11 21:44:37 +0100",
-    "message": "Commit message"
   }
 ]

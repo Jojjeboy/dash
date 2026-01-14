@@ -1,5 +1,28 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useScreenHealth } from '@/composables/useScreenHealth'
+
+// Screen Health Integration
+const widgetRef = ref<HTMLElement | null>(null)
+useScreenHealth({
+  widgetId: 'smhi-weather',
+  oledRisk: 'low',
+  supportedActions: ['microMotion'],
+  onAction: async (action) => {
+    if (action === 'microMotion' && widgetRef.value) {
+      console.log('SmhiWidget: Executing micro-motion')
+      // Simple transform wiggle
+      const el = widgetRef.value
+      el.style.transform = 'translate(1px, 1px)'
+      setTimeout(() => {
+        el.style.transform = 'translate(-1px, -1px)'
+        setTimeout(() => {
+          el.style.transform = 'none'
+        }, 1000)
+      }, 1000)
+    }
+  }
+})
 
 interface WeatherData {
   current: {
@@ -158,7 +181,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="h-full flex flex-col items-center justify-between p-4 box-border">
+  <div ref="widgetRef" class="h-full flex flex-col items-center justify-between p-4 box-border transition-transform duration-1000">
     <!-- Loading/Error -->
     <div v-if="loading" class="flex-1 flex items-center justify-center opacity-50">
       Wait...

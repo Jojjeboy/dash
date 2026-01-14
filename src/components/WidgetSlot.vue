@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineAsyncComponent, computed } from 'vue'
+import { defineAsyncComponent, computed, ref } from 'vue'
 import { registry } from '@/widgets/registry'
 import { useDashboardStore } from '@/stores/dashboard'
 import { useI18n } from 'vue-i18n'
@@ -20,11 +20,22 @@ const getWidgetComponent = (id: string | null) => {
   return def ? defineAsyncComponent(def.component) : null
 }
 
+const dynamicTitles = ref<Record<string, string>>({})
+
+const handleTitleUpdate = (id: string, newTitle: string) => {
+  dynamicTitles.value[id] = newTitle
+}
+
 const getWidgetName = (id: string, subIndex?: number) => {
+  // 1. Dynamic title from widget itself
+  if (dynamicTitles.value[id]) return dynamicTitles.value[id]
+
+  // 2. Custom name from store
   const key = subIndex !== undefined ? `${props.index}-${subIndex}` : `${props.index}`
-  // Get custom name from store, or fall back to default widget title
   const customName = dashboardStore.config?.widgetNames?.[key]
   if (customName) return customName
+  
+  // 3. Registry default
   return registry.get(id)?.title || ''
 }
 
@@ -37,11 +48,13 @@ const widgetIds = computed(() => {
 })
 
 const widgetConfigs = computed(() => {
-  return widgetIds.value.map((id, subIdx) => ({
-    id,
-    component: getWidgetComponent(id),
-    name: id ? getWidgetName(id, isSplit.value ? subIdx : undefined) : ''
-  }))
+  return widgetIds.value.map((id, subIdx) => {
+    return {
+      id: id,
+      component: getWidgetComponent(id),
+      name: id ? getWidgetName(id, isSplit.value ? subIdx : undefined) : ''
+    }
+  })
 })
 </script>
 
@@ -77,8 +90,9 @@ const widgetConfigs = computed(() => {
       >
         <component
           :is="config.component"
-          v-if="config.component"
+          v-if="config.component && config.id"
           class="w-full h-full"
+          @update-title="(title: string) => handleTitleUpdate(config.id!, title)"
         />
 
         <!-- Empty State -->
