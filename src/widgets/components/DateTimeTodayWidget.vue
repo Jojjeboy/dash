@@ -16,8 +16,6 @@ const allHistoryEvents = ref<{ year: number; text: string }[]>([])
 const isLoadingHistory = ref(false)
 const showFullHistory = ref(false)
 
-// Timer State
-const showTimer = ref(false)
 const timeLeft = ref(0)
 const inputMinutes = ref(5)
 const inputSeconds = ref(0)
@@ -178,10 +176,6 @@ const resetTimer = () => {
   timeLeft.value = 0
 }
 
-const toggleTimerView = () => {
-    showTimer.value = !showTimer.value
-}
-
 // --- Lifecycle ---
 onMounted(() => {
   updateTime()
@@ -261,27 +255,8 @@ const alignmentClass = computed(() => {
     :class="[containerClass, alignmentClass]"
     :style="{ opacity: contentOpacity }"
   >
-    <!-- Top Right Toggle -->
-    <button 
-        @click="toggleTimerView"
-        class="absolute top-4 right-4 opacity-30 hover:opacity-100 transition-opacity p-2"
-    >
-        <svg v-if="!showTimer" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-    </button>
-
-    <!-- Header: Hidden in Info mode because it's integrated into the grid -->
-    <div v-if="showTimer" class="transition-all duration-500 mb-4 scale-75 origin-top-left opacity-50">
-        <div class="text-6xl font-light tracking-tight mb-2 opacity-90 font-mono">
-        {{ timeStr }}
-        </div>
-        <div class="text-2xl font-normal opacity-80 capitalize">
-        {{ dateStr }}
-        </div>
-    </div>
-
-    <!-- Mode: Info (History/Names/Time) -->
-    <div v-if="!showTimer" class="flex-1 flex flex-col min-h-0 relative transition-opacity duration-300">
+    <!-- Mode: Info (Full Grid always shown now) -->
+    <div class="flex-1 flex flex-col min-h-0 relative transition-opacity duration-300">
         <!-- Grid View -->
         <div v-if="!showFullHistory" class="flex-1 grid grid-cols-2 grid-rows-2 gap-3 h-full">
             <!-- Box 1: Time (Large) -->
@@ -292,20 +267,60 @@ const alignmentClass = computed(() => {
                 <div class="text-[10px] uppercase tracking-[0.3em] opacity-30 mt-2 font-black">Klockan</div>
             </div>
 
-            <!-- Box 2: Date & Week -->
+            <!-- Box 2: Date, Week & Namnsdag -->
             <div class="bg-white/5 rounded-2xl flex flex-col items-center justify-center p-4 text-center">
                 <div class="text-xl font-bold opacity-80 capitalize mb-1">{{ dateStr.split(' ')[0] }}</div>
                 <div class="text-3xl font-black opacity-90 mb-1">{{ dateStr.split(' ').slice(1).join(' ') }}</div>
-                <div class="px-3 py-1 bg-white/10 rounded-full text-[10px] font-black uppercase tracking-widest opacity-60">
-                    Vecka {{ weekNum }}
+                <div class="flex flex-col gap-1 mt-2">
+                    <div class="px-3 py-1 bg-white/10 rounded-full text-[10px] font-black uppercase tracking-widest opacity-60">
+                        Vecka {{ weekNum }}
+                    </div>
+                    <div v-if="nameDays.length" class="text-[10px] uppercase tracking-wider opacity-30 font-black mt-1">
+                        {{ nameDays.join(' · ') }}
+                    </div>
                 </div>
             </div>
 
-            <!-- Box 3: Namnsdag -->
-            <div class="bg-white/5 rounded-2xl flex flex-col items-center justify-center p-4 text-center">
-                <div class="text-[10px] uppercase tracking-widest opacity-30 mb-2 font-black">Namnsdag</div>
-                <div class="text-lg font-medium opacity-80 leading-tight">
-                    {{ nameDays.length ? nameDays.join('\n') : 'Ingen uppgift' }}
+            <!-- Box 3: Integrated Timer -->
+            <div class="bg-white/5 rounded-2xl flex flex-col items-center justify-center p-3 text-center overflow-hidden">
+                <div v-if="timeLeft > 0 || isRunning" class="w-full">
+                    <div class="text-[10px] uppercase tracking-widest opacity-30 mb-2 font-black">Timer</div>
+                    <div class="text-4xl font-black mb-2 tabular-nums leading-none">
+                        {{ formattedTimer }}
+                    </div>
+                    <div class="flex gap-1 justify-center">
+                        <button
+                            @click.stop="isRunning ? stopTimer() : startTimer()"
+                            class="rounded-lg uppercase font-bold tracking-widest px-2 py-1 text-[8px] transition-colors"
+                            :class="isRunning ? 'bg-red-500/20 text-red-300' : 'bg-green-500/20 text-green-300'"
+                        >
+                            {{ isRunning ? 'Paus' : 'Kör' }}
+                        </button>
+                        <button
+                            @click.stop="resetTimer"
+                            class="rounded-lg uppercase font-bold tracking-widest bg-white/10 hover:bg-white/20 px-2 py-1 text-[8px]"
+                        >
+                            Återställ
+                        </button>
+                    </div>
+                </div>
+                <div v-else class="w-full flex flex-col items-center">
+                    <div class="text-[10px] uppercase tracking-widest opacity-30 mb-3 font-black">Sätt Timer</div>
+                    <div class="flex items-center justify-center gap-1 mb-3">
+                        <div class="flex flex-col items-center">
+                            <input v-model="inputMinutes" type="number" class="bg-white/5 border border-white/10 rounded-lg text-center w-10 py-1 text-sm font-bold outline-none">
+                        </div>
+                        <span class="text-sm font-bold opacity-50">:</span>
+                        <div class="flex flex-col items-center">
+                            <input v-model="inputSeconds" type="number" class="bg-white/5 border border-white/10 rounded-lg text-center w-10 py-1 text-sm font-bold outline-none">
+                        </div>
+                    </div>
+                    <button
+                        @click.stop="startTimer"
+                        class="w-full py-2 rounded-lg bg-white/10 hover:bg-white/20 text-[9px] uppercase font-black tracking-widest transition-all active:scale-95"
+                    >
+                        Starta
+                    </button>
                 </div>
             </div>
 
@@ -363,48 +378,6 @@ const alignmentClass = computed(() => {
                     {{ isLoadingHistory ? 'Laddar händelser...' : 'Inga fler händelser hittades för denna dag.' }}
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Mode: Timer -->
-    <div v-else class="flex-1 flex flex-col items-center justify-center transition-opacity duration-300 w-full">
-        <div v-if="timeLeft > 0 || isRunning" class="text-center w-full">
-            <div class="text-[var(--dash-text)] font-black mb-2 tabular-nums leading-none text-5xl">
-                {{ formattedTimer }}
-            </div>
-            <div class="flex gap-2 justify-center">
-                <button
-                @click.stop="isRunning ? stopTimer() : startTimer()"
-                class="rounded-lg uppercase font-bold tracking-widest transition-all px-3 py-1 text-[10px] bg-white/10 hover:bg-white/20"
-                >
-                {{ isRunning ? 'Pause' : 'Resume' }}
-                </button>
-                <button
-                @click.stop="resetTimer"
-                class="rounded-lg uppercase font-bold tracking-widest bg-white/5 hover:bg-white/10 px-3 py-1 text-[10px]"
-                >
-                Reset
-                </button>
-            </div>
-        </div>
-        <div v-else class="flex flex-col items-center">
-            <div class="flex items-center justify-center gap-2 mb-4">
-                 <div class="flex flex-col items-center">
-                    <input v-model="inputMinutes" type="number" class="bg-transparent text-center w-16 text-4xl font-bold outline-none placeholder-white/20" placeholder="00">
-                    <span class="text-[10px] uppercase opacity-50">Min</span>
-                 </div>
-                 <span class="text-2xl">:</span>
-                 <div class="flex flex-col items-center">
-                    <input v-model="inputSeconds" type="number" class="bg-transparent text-center w-16 text-4xl font-bold outline-none placeholder-white/20" placeholder="00">
-                     <span class="text-[10px] uppercase opacity-50">Sec</span>
-                 </div>
-            </div>
-             <button
-                @click.stop="startTimer"
-                class="w-full py-2 px-6 rounded-lg bg-[var(--dash-text)] text-[var(--dash-bg)] text-[10px] uppercase font-bold tracking-widest shadow-lg active:scale-95 transition-all"
-            >
-                Start
-            </button>
         </div>
     </div>
 
