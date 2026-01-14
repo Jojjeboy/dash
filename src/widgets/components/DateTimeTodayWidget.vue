@@ -45,6 +45,14 @@ const updateTime = () => {
   nameDays.value = entry ? entry.namn : []
 }
 
+const weekNum = computed(() => {
+  const d = new Date()
+  d.setHours(0, 0, 0, 0)
+  d.setDate(d.getDate() + 4 - (d.getDay() || 7))
+  const yearStart = new Date(d.getFullYear(), 0, 1)
+  return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7)
+})
+
 
 
 // --- Data Logic: History API ---
@@ -259,30 +267,56 @@ const alignmentClass = computed(() => {
         <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
     </button>
 
-    <!-- Header: Time & Date (Always Visible unless Timer is VERY dominant, let's keep it but maybe smaller in timer mode?) -->
-    <!-- Actually, let's keep top prominent -->
-    <div class="transition-all duration-500" :class="showTimer ? 'scale-75 origin-top-left opacity-50' : ''">
+    <!-- Header: Hidden in Info mode because it's integrated into the grid -->
+    <div v-if="showTimer" class="transition-all duration-500 mb-4 scale-75 origin-top-left opacity-50">
         <div class="text-6xl font-light tracking-tight mb-2 opacity-90 font-mono">
         {{ timeStr }}
         </div>
-        <div class="text-2xl font-normal opacity-80 capitalize mb-4">
+        <div class="text-2xl font-normal opacity-80 capitalize">
         {{ dateStr }}
         </div>
     </div>
 
-    <!-- Mode: Info (History/Names) -->
-    <div v-if="!showTimer" class="flex-1 flex flex-col transition-opacity duration-300">
-        <!-- Name Day -->
-        <div v-if="nameDays.length" class="mb-6 opacity-70">
-            <div class="text-xs uppercase tracking-widest opacity-50 mb-1">Namnsdag</div>
-            <div class="text-lg">{{ nameDays.join(', ') }}</div>
+    <!-- Mode: Info (History/Names/Time) -->
+    <div v-if="!showTimer" class="flex-1 grid grid-cols-2 grid-rows-2 gap-3 transition-opacity duration-300">
+        <!-- Box 1: Time (Large) -->
+        <div class="bg-white/5 rounded-2xl flex flex-col items-center justify-center p-4 relative overflow-hidden group">
+            <div class="text-7xl font-black tracking-tighter opacity-90 font-mono transition-transform group-hover:scale-110 duration-700">
+                {{ timeStr }}
+            </div>
+            <div class="text-[10px] uppercase tracking-[0.3em] opacity-30 mt-2 font-black">Klockan</div>
         </div>
 
-        <!-- History Event -->
-        <div v-if="historyEvent" class="mt-auto opacity-60 max-w-sm">
-            <div class="text-xs uppercase tracking-widest opacity-50 mb-1">Hände {{ historyEvent.year }}</div>
-            <div class="text-sm leading-snug line-clamp-3">
-                {{ historyEvent.text }}
+        <!-- Box 2: Date & Week -->
+        <div class="bg-white/5 rounded-2xl flex flex-col items-center justify-center p-4 text-center">
+            <div class="text-xl font-bold opacity-80 capitalize mb-1">{{ dateStr.split(' ')[0] }}</div>
+            <div class="text-3xl font-black opacity-90 mb-1">{{ dateStr.split(' ').slice(1).join(' ') }}</div>
+            <div class="px-3 py-1 bg-white/10 rounded-full text-[10px] font-black uppercase tracking-widest opacity-60">
+                Vecka {{ weekNum }}
+            </div>
+        </div>
+
+        <!-- Box 3: Namnsdag -->
+        <div class="bg-white/5 rounded-2xl flex flex-col items-center justify-center p-4 text-center">
+            <div class="text-[10px] uppercase tracking-widest opacity-30 mb-2 font-black">Namnsdag</div>
+            <div class="text-lg font-medium opacity-80 leading-tight">
+                {{ nameDays.length ? nameDays.join('\n') : 'Ingen uppgift' }}
+            </div>
+        </div>
+
+        <!-- Box 4: History -->
+        <div class="bg-white/5 rounded-2xl flex flex-col items-start justify-center p-5 text-left relative overflow-hidden">
+            <div v-if="historyEvent" class="flex flex-col h-full justify-center">
+                <div class="text-[10px] uppercase tracking-widest opacity-30 mb-2 font-black">Hände {{ historyEvent.year }}</div>
+                <div class="text-xs leading-relaxed opacity-70 line-clamp-4 font-medium italic">
+                    "{{ historyEvent.text }}"
+                </div>
+            </div>
+            <div v-else class="text-xs opacity-20 italic">Hämtar historik...</div>
+            
+            <!-- Decorative Year Background -->
+            <div v-if="historyEvent" class="absolute -bottom-2 -right-2 text-6xl font-black opacity-[0.03] select-none pointer-events-none">
+                {{ historyEvent.year }}
             </div>
         </div>
     </div>
