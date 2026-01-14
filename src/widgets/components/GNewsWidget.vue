@@ -2,9 +2,26 @@
 import { ref, computed, onMounted } from 'vue'
 import { useDashboardStore } from '@/stores/dashboard'
 import { useGNews } from '@/composables/useGNews'
+import { useScreenHealth } from '@/composables/useScreenHealth'
 import { ArrowPathIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline'
 
 const emit = defineEmits(['update-title'])
+const widgetRef = ref<HTMLElement | null>(null)
+
+// Screen Health Integration
+useScreenHealth({
+  widgetId: 'gnews',
+  oledRisk: 'low',
+  supportedActions: ['microMotion'],
+  onAction: async (action) => {
+    if (action === 'microMotion' && widgetRef.value) {
+      const el = widgetRef.value
+      const x = (Math.random() * 2 - 1).toFixed(1)
+      const y = (Math.random() * 2 - 1).toFixed(1)
+      el.style.transform = `translate(${x}px, ${y}px)`
+    }
+  }
+})
 
 onMounted(() => {
   emit('update-title', 'Nyheter')
@@ -56,7 +73,7 @@ const formatTime = (dateStr: string) => {
 </script>
 
 <template>
-  <div class="flex flex-col h-full w-full overflow-hidden text-[var(--dash-text)]">
+  <div ref="widgetRef" class="flex flex-col h-full w-full overflow-hidden text-[var(--dash-text)] transition-transform duration-1000">
     <!-- Categories Tabs -->
     <div class="flex-none px-3 pt-6 pb-2">
       <div class="flex space-x-2 overflow-x-auto no-scrollbar pb-1">

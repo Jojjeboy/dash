@@ -2,12 +2,14 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { getDepartures, STATIONS, type Departure } from '@/services/vasttrafik'
 import { ArrowPathIcon, ExclamationTriangleIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
+import { useScreenHealth } from '@/composables/useScreenHealth'
 
 const departures = ref<Departure[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 const selectedGid = ref<string>(STATIONS[0]?.gid ?? '9021014004730000') // Default: Mariaplan
 let intervalId: number | null = null
+const widgetRef = ref<HTMLElement | null>(null)
 
 const now = ref(Date.now())
 const isPortrait = ref(window.innerHeight > window.innerWidth)
@@ -17,6 +19,21 @@ const selectedStation = computed(() =>
 )
 
 const emit = defineEmits(['update-title'])
+
+// Screen Health Integration
+useScreenHealth({
+  widgetId: 'commute',
+  oledRisk: 'low',
+  supportedActions: ['microMotion'],
+  onAction: async (action) => {
+    if (action === 'microMotion' && widgetRef.value) {
+      const el = widgetRef.value
+      const x = (Math.random() * 2 - 1).toFixed(1)
+      const y = (Math.random() * 2 - 1).toFixed(1)
+      el.style.transform = `translate(${x}px, ${y}px)`
+    }
+  }
+})
 
 // Load saved station from localStorage
 onMounted(() => {
@@ -97,7 +114,7 @@ const loadData = async () => {
 </script>
 
 <template>
-  <div class="h-full w-full flex flex-col p-3 relative overflow-hidden">
+  <div ref="widgetRef" class="h-full w-full flex flex-col p-3 relative overflow-hidden transition-transform duration-1000">
     <div class="flex items-center justify-between z-10 px-1">
       <div class="flex items-center gap-2">
         <!-- Station Selector -->
@@ -173,7 +190,7 @@ const loadData = async () => {
           <!-- Right: Time -->
           <div class="flex flex-col items-end">
             <div class="flex items-baseline gap-1">
-              <span class="text-[var(--dash-text)] font-black text-base tabular-nums leading-none">
+              <span class="text-[var(--dash-text)] font-black text-sm tabular-nums leading-none">
                 {{ formatTime(dep.estimatedTime || dep.plannedTime) }}
               </span>
               <span

@@ -22,12 +22,12 @@ const DEFAULT_CONFIG: DashboardConfig = {
   version: 1,
   layoutMode: 6,
   theme: 'dark',
-  activeWidgetIds: ['timer'], // Show Timer by default in slot 1
+  activeWidgetIds: ['datetime-today'], // Show Timer by default in slot 1
   calendarIcsPath: 'liakar1020@skola.goteborg.se.ics',
   newsConfig: {
     maxItems: 5,
     refreshIntervalMinutes: 30,
-    defaultCategory: undefined
+    defaultCategory: 'general'
   }
 }
 
@@ -72,7 +72,16 @@ export const useDashboardStore = defineStore('dashboard', () => {
         loading.value = true
         unsubscribe = onSnapshot(configRef, (docSnap) => {
           if (docSnap.exists()) {
-            config.value = docSnap.data() as DashboardConfig
+            const loadedConfig = docSnap.data() as DashboardConfig
+
+            // Migration: Replace 'timer' with 'datetime-today' if present
+            if (loadedConfig.activeWidgetIds) {
+              loadedConfig.activeWidgetIds = loadedConfig.activeWidgetIds.map(id =>
+                id === 'timer' ? 'datetime-today' : id
+              )
+            }
+
+            config.value = loadedConfig
           } else {
             // Initialize with defaults if no config exists
             saveConfig(DEFAULT_CONFIG)
@@ -87,17 +96,34 @@ export const useDashboardStore = defineStore('dashboard', () => {
     )
   }
 
+  // Helper to remove undefined values from objects (Firestore doesn't accept undefined)
+  const removeUndefined = (obj: any): any => {
+    if (obj === null || typeof obj !== 'object') return obj
+    if (Array.isArray(obj)) return obj.map(removeUndefined)
+
+    const result: any = {}
+    for (const key in obj) {
+      if (obj[key] !== undefined) {
+        result[key] = typeof obj[key] === 'object' ? removeUndefined(obj[key]) : obj[key]
+      }
+    }
+    return result
+  }
+
   // Persist config to Firestore
   const saveConfig = async (newConfig: Partial<DashboardConfig>) => {
     if (!authStore.user) return
 
     const configRef = doc(db, 'users', authStore.user.uid, 'config', 'dashboard')
-    const finalConfig = {
+    const mergedConfig = {
       ...DEFAULT_CONFIG,
       ...config.value,
       ...newConfig,
       updatedAt: serverTimestamp()
     }
+
+    // Remove any undefined values before saving
+    const finalConfig = removeUndefined(mergedConfig)
 
     try {
       await setDoc(configRef, finalConfig, { merge: true })
@@ -134,7 +160,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     const currentConfig = config.value?.newsConfig || {
       maxItems: 5,
       refreshIntervalMinutes: 30,
-      defaultCategory: undefined
+      defaultCategory: 'general'
     }
     saveConfig({
       newsConfig: {

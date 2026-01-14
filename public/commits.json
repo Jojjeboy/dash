@@ -1,5 +1,41 @@
 [
   {
+    "hash": "bbae6d1",
+    "fullHash": "bbae6d14600f533ae711d1952662c3a5dbf25412",
+    "date": "2026-01-14 15:31:10 +0100",
+    "message": "sunrise/sunset"
+  },
+  {
+    "hash": "fd8b246",
+    "fullHash": "fd8b24610d8044c702fdcc4d80fc6b17200064f3",
+    "date": "2026-01-14 15:23:04 +0100",
+    "message": "More fix"
+  },
+  {
+    "hash": "0f0b114",
+    "fullHash": "0f0b11472c76fe9d85c597b544e2332df6e203ae",
+    "date": "2026-01-14 14:15:40 +0100",
+    "message": "More fixes"
+  },
+  {
+    "hash": "c7c8eeb",
+    "fullHash": "c7c8eeb4de24c2cf79efc95cfdefcff16de2d032",
+    "date": "2026-01-14 13:55:35 +0100",
+    "message": "Fixes"
+  },
+  {
+    "hash": "946ec2d",
+    "fullHash": "946ec2d6091cb314856a5aa18f988194d611b8a3",
+    "date": "2026-01-14 13:46:00 +0100",
+    "message": "Settings cleanup"
+  },
+  {
+    "hash": "7659cf6",
+    "fullHash": "7659cf61dc096d68b61482cd516ff9418c5586b7",
+    "date": "2026-01-14 13:32:22 +0100",
+    "message": "Fixes"
+  },
+  {
     "hash": "86957b8",
     "fullHash": "86957b86fed50ff793431804e9fc8fcb6192c05c",
     "date": "2026-01-14 13:04:05 +0100",
@@ -82,41 +118,5 @@
     "fullHash": "493e9c4b768dd8e4aa6e552f3f581c9f95d2cf93",
     "date": "2026-01-12 16:22:23 +0100",
     "message": "Solid calendar color"
-  },
-  {
-    "hash": "d8bcfef",
-    "fullHash": "d8bcfef342bcda239132f1af042dd8973dd7d854",
-    "date": "2026-01-12 15:52:03 +0100",
-    "message": "Calendar UI fixes and commute fixes"
-  },
-  {
-    "hash": "0287dc5",
-    "fullHash": "0287dc5cb983773c1686e3089820dc1864f2265d",
-    "date": "2026-01-12 15:33:18 +0100",
-    "message": "lint error fix v3"
-  },
-  {
-    "hash": "0b78516",
-    "fullHash": "0b785163d60d086e34535e2ebb1f763957d0e6ed",
-    "date": "2026-01-12 15:26:28 +0100",
-    "message": "Lint errors v2"
-  },
-  {
-    "hash": "0121046",
-    "fullHash": "0121046ef4d292011454865da044d0295c767b51",
-    "date": "2026-01-12 15:23:41 +0100",
-    "message": "Lint errors"
-  },
-  {
-    "hash": "221cbc0",
-    "fullHash": "221cbc00828d938c6bc6a395d9aa96a687ab4226",
-    "date": "2026-01-12 15:20:12 +0100",
-    "message": "Lias calender widget"
-  },
-  {
-    "hash": "64db2ba",
-    "fullHash": "64db2bafb23d728a61e060fc6f9ba8cfca92dc7f",
-    "date": "2026-01-12 14:28:30 +0100",
-    "message": "Commits.json"
   }
 ]

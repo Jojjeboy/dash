@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { parseICS, getEventsForDate, getSubjectColor, type CalendarEvent } from '@/utils/ics-parser'
 import { useDashboardStore } from '@/stores/dashboard'
+import { useScreenHealth } from '@/composables/useScreenHealth'
 
 const dashboardStore = useDashboardStore()
 
@@ -11,8 +12,29 @@ const loading = ref(true)
 const error = ref<string | null>(null)
 const currentTime = ref(new Date())
 const scrollContainer = ref<HTMLElement | null>(null)
+const widgetRef = ref<HTMLElement | null>(null)
+const layoutSeed = ref(0)
 
 const emit = defineEmits(['update-title'])
+
+// Screen Health Integration
+useScreenHealth({
+  widgetId: 'calendar',
+  oledRisk: 'medium',
+  supportedActions: ['microMotion', 'layoutSeed'],
+  onAction: async (action) => {
+    if (action === 'microMotion' && widgetRef.value) {
+      const el = widgetRef.value
+      const x = (Math.random() * 2 - 1).toFixed(1)
+      const y = (Math.random() * 2 - 1).toFixed(1)
+      el.style.transform = `translate(${x}px, ${y}px)`
+    }
+    
+    if (action === 'layoutSeed') {
+      layoutSeed.value = (layoutSeed.value + 1) % 2
+    }
+  }
+})
 
 // Update current time every minute
 onMounted(() => {
@@ -193,7 +215,7 @@ const formatTimeRange = (start: Date, end: Date) => {
 </script>
 
 <template>
-  <div ref="widgetContainer" class="h-full w-full flex flex-col glass-tile p-1.5 overflow-hidden">
+  <div ref="widgetRef" class="h-full w-full flex flex-col glass-tile p-1.5 overflow-hidden transition-transform duration-1000">
     <!-- Header -->
     <div class="flex items-center justify-end z-10">
       <div class="flex gap-1">
