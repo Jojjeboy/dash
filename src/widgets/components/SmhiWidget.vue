@@ -202,27 +202,30 @@ const processData = (data: SmhiResponse) => {
   weather.value = { days }
 }
 
-const formatDate = (dateStr: string) => {
-  const d = new Date(dateStr)
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  
-  const tomorrow = new Date(today)
-  tomorrow.setDate(tomorrow.getDate() + 1)
-  
-  const dayAfterTomorrow = new Date(today)
-  dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2)
-
-  const checkDate = new Date(d)
-  checkDate.setHours(0, 0, 0, 0)
-
-  if (checkDate.getTime() === tomorrow.getTime()) return 'Imorgon'
-  if (checkDate.getTime() === dayAfterTomorrow.getTime()) return 'Övermorgon'
-
-  return d.toLocaleDateString('sv-SE', { weekday: 'short', day: 'numeric' })
-}
 
 const emit = defineEmits(['update-title'])
+
+const getRelativeDateLabel = (dateStr: string) => {
+  const today = new Date()
+  const target = new Date(dateStr)
+  
+  // Reset times to noon to avoid DST/timezone edge cases
+  const t1 = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 12)
+  const t2 = new Date(target.getFullYear(), target.getMonth(), target.getDate(), 12)
+  
+  const diffDays = Math.round((t2.getTime() - t1.getTime()) / (1000 * 60 * 60 * 24))
+  
+  if (diffDays === 0) return 'Idag'
+  
+  const weekday = t2.toLocaleDateString('sv-SE', { weekday: 'short' }).replace('.', '')
+  const dayMonth = `${t2.getDate()}/${t2.getMonth() + 1}`
+  
+  if (diffDays === 1) return `Imorgon ${weekday} ${dayMonth}`
+  if (diffDays === 2) return `Övermorgon ${weekday} ${dayMonth}`
+  
+  const capWeekday = weekday.charAt(0).toUpperCase() + weekday.slice(1)
+  return `${capWeekday} ${dayMonth}`
+}
 
 onMounted(() => {
   fetchWeather()
@@ -283,7 +286,7 @@ onMounted(() => {
           class="bg-white/5 rounded-lg flex flex-col items-center p-3 relative"
         >
           <div class="text-xs uppercase tracking-widest opacity-40 font-bold w-full text-center mb-1">
-            {{ formatDate(day.date) }}
+            {{ getRelativeDateLabel(day.date) }}
           </div>
           
           <div class="flex-1 flex flex-col items-center justify-center w-full gap-1">

@@ -17,6 +17,7 @@ const isLoadingHistory = ref(false)
 const showFullHistory = ref(false)
 
 const timeLeft = ref(0)
+const totalTime = ref(0)
 const inputMinutes = ref(5)
 const inputSeconds = ref(0)
 const isRunning = ref(false)
@@ -146,11 +147,24 @@ const playAlert = async () => {
   }
 }
 
+// --- Circular Progress Logic ---
+const circumference = 2 * Math.PI * 45 // r=45
+const dashOffset = computed(() => {
+  if (totalTime.value === 0) return 0
+  const progress = timeLeft.value / totalTime.value
+  return circumference * (1 - progress)
+})
+
 const startTimer = () => {
-  if (timeLeft.value === 0) timeLeft.value = (inputMinutes.value * 60) + inputSeconds.value
+  const duration = (inputMinutes.value * 60) + inputSeconds.value
+  if (timeLeft.value === 0 || timeLeft.value === duration) {
+     timeLeft.value = duration
+     totalTime.value = duration
+  }
+  
   if (audioContext.value?.state === 'suspended') audioContext.value.resume()
   
-  if (!isRunning.value) {
+  if (!isRunning.value && timeLeft.value > 0) {
     isRunning.value = true
     timerInterval = window.setInterval(() => {
       if (timeLeft.value > 0) {
@@ -281,45 +295,60 @@ const alignmentClass = computed(() => {
                 </div>
             </div>
 
-            <!-- Box 3: Integrated Timer -->
-            <div class="bg-white/5 rounded-2xl flex flex-col items-center justify-center p-3 text-center overflow-hidden">
-                <div v-if="timeLeft > 0 || isRunning" class="w-full">
-                    <div class="text-[10px] uppercase tracking-widest opacity-30 mb-2 font-black">Timer</div>
-                    <div class="text-4xl font-black mb-2 tabular-nums leading-none">
-                        {{ formattedTimer }}
-                    </div>
-                    <div class="flex gap-1 justify-center">
-                        <button
-                            @click.stop="isRunning ? stopTimer() : startTimer()"
-                            class="rounded-lg uppercase font-bold tracking-widest px-2 py-1 text-[8px] transition-colors"
-                            :class="isRunning ? 'bg-red-500/20 text-red-300' : 'bg-green-500/20 text-green-300'"
-                        >
-                            {{ isRunning ? 'Paus' : 'Kör' }}
-                        </button>
-                        <button
-                            @click.stop="resetTimer"
-                            class="rounded-lg uppercase font-bold tracking-widest bg-white/10 hover:bg-white/20 px-2 py-1 text-[8px]"
-                        >
-                            Återställ
-                        </button>
+            <!-- Box 3: Integrated Timer (Circular) -->
+            <div class="bg-white/5 rounded-2xl flex flex-col items-center justify-center p-2 relative overflow-hidden">
+                <div v-if="timeLeft > 0 || isRunning" class="relative w-full h-full flex items-center justify-center">
+                    <!-- Circular Progress -->
+                    <svg class="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
+                        <!-- Background Circle -->
+                        <circle cx="50" cy="50" r="45" fill="none" class="stroke-white/10" stroke-width="4" />
+                        <!-- Progress Circle -->
+                        <circle 
+                            cx="50" cy="50" r="45" 
+                            fill="none" 
+                            class="stroke-[var(--dash-text)] transition-all duration-1000 ease-linear"
+                            stroke-width="4" 
+                            stroke-linecap="round"
+                            :stroke-dasharray="circumference"
+                            :stroke-dashoffset="dashOffset"
+                        />
+                    </svg>
+
+                    <!-- Time & Controls Overlay -->
+                    <div class="absolute inset-0 flex flex-col items-center justify-center z-10">
+                        <div class="text-xl font-black tabular-nums tracking-tight leading-none mb-1">
+                            {{ formattedTimer }}
+                        </div>
+                        <div class="flex gap-2">
+                             <button
+                                @click.stop="isRunning ? stopTimer() : startTimer()"
+                                class="w-6 h-6 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all active:scale-95"
+                            >
+                                <svg v-if="isRunning" class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>
+                                <svg v-else class="w-3 h-3 fill-current ml-0.5" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </button>
+                            <button
+                                @click.stop="resetTimer"
+                                class="w-6 h-6 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all active:scale-95"
+                            >
+                                <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div v-else class="w-full flex flex-col items-center">
-                    <div class="text-[10px] uppercase tracking-widest opacity-30 mb-3 font-black">Sätt Timer</div>
-                    <div class="flex items-center justify-center gap-1 mb-3">
-                        <div class="flex flex-col items-center">
-                            <input v-model="inputMinutes" type="number" class="bg-white/5 border border-white/10 rounded-lg text-center w-10 py-1 text-sm font-bold outline-none">
-                        </div>
-                        <span class="text-sm font-bold opacity-50">:</span>
-                        <div class="flex flex-col items-center">
-                            <input v-model="inputSeconds" type="number" class="bg-white/5 border border-white/10 rounded-lg text-center w-10 py-1 text-sm font-bold outline-none">
-                        </div>
+
+                <div v-else class="w-full h-full flex flex-col items-center justify-center">
+                    <div class="text-[9px] uppercase tracking-widest opacity-30 mb-2 font-black">Set Timer</div>
+                    <div class="flex items-center justify-center gap-1 mb-2">
+                        <input v-model="inputMinutes" type="number" class="bg-transparent border-b border-white/20 text-center w-8 py-0.5 text-lg font-bold outline-none focus:border-white transition-colors placeholder-white/20" placeholder="00">
+                        <span class="text-lg font-bold opacity-50 relative -top-[1px]">:</span>
+                        <input v-model="inputSeconds" type="number" class="bg-transparent border-b border-white/20 text-center w-8 py-0.5 text-lg font-bold outline-none focus:border-white transition-colors placeholder-white/20" placeholder="00">
                     </div>
                     <button
                         @click.stop="startTimer"
-                        class="w-full py-2 rounded-lg bg-white/10 hover:bg-white/20 text-[9px] uppercase font-black tracking-widest transition-all active:scale-95"
+                        class="w-8 h-8 rounded-full bg-[var(--dash-text)] text-[var(--dash-bg)] flex items-center justify-center shadow-lg active:scale-95 transition-all hover:opacity-90"
                     >
-                        Starta
+                         <svg class="w-4 h-4 fill-current ml-0.5" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                     </button>
                 </div>
             </div>
