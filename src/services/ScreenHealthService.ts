@@ -1,4 +1,4 @@
-import { reactive, readonly, ref, computed } from 'vue'
+import { reactive, computed } from 'vue'
 
 export type ScreenHealthAction = 'microMotion' | 'pixelShift' | 'layoutSeed' | 'softRefresh'
 export type OledRiskLevel = 'low' | 'medium' | 'high'

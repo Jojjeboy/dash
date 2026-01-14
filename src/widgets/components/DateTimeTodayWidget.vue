@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useScreenHealth } from '@/composables/useScreenHealth'
 import namesData from '@/assets/names.json'
-import { useI18n } from 'vue-i18n'
+
 import alertSound from '@/assets/timer.mp3'
 
-const { t } = useI18n()
+
 
 // --- State ---
 const timeStr = ref('')
@@ -40,7 +40,8 @@ const updateTime = () => {
   const dd = String(now.getDate()).padStart(2, '0')
   const key = `${mm}-${dd}`
   
-  const entry = namesData.find((n: any) => n.datum === key)
+  interface NameDayEntry { datum: string; namn: string[] }
+  const entry = (namesData as NameDayEntry[]).find((n) => n.datum === key)
   nameDays.value = entry ? entry.namn : []
 }
 

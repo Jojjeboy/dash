@@ -47,6 +47,41 @@ const SMHI_URL = 'https://opendata-download-metfcst.smhi.se/api/category/pmp3g/v
 
 // Mapping SMHI Wsymb2 codes to emojis/descriptions
 // 1-27 scale. Simplified mapping.
+// Mapping available here: https://opendata.smhi.se/apidocs/metfcst/parameters.html#parameter-wsymb2
+const Wsymb2TextMap: Record<number, string> = {
+  1: 'Klart',
+  2: 'Nästan klart',
+  3: 'Växlande molnighet',
+  4: 'Halvklart',
+  5: 'Molnigt',
+  6: 'Mulet',
+  7: 'Dimma',
+  8: 'Lätt regnskur',
+  9: 'Regnskur',
+  10: 'Kraftig regnskur',
+  11: 'Åskskur',
+  12: 'Lätt snöblandat regn',
+  13: 'Snöblandat regn',
+  14: 'Kraftigt snöblandat regn',
+  15: 'Lätt snöfall',
+  16: 'Snöfall',
+  17: 'Kraftigt snöfall',
+  18: 'Lätt regn',
+  19: 'Regn',
+  20: 'Kraftigt regn',
+  21: 'Åska',
+  22: 'Lätt snöblandat regn',
+  23: 'Snöblandat regn',
+  24: 'Kraftigt snöblandat regn',
+  25: 'Lätt snöfall',
+  26: 'Snöfall',
+  27: 'Kraftigt snöfall',
+}
+
+const getSymbolText = (code: number): string => {
+  return Wsymb2TextMap[code] || ''
+}
+
 const getSymbolIcon = (code: number): string => {
   if (code <= 2) return '☀️' // Clear sky
   if (code <= 4) return '⛅' // Variable cloudiness
@@ -192,34 +227,42 @@ onMounted(() => {
     </div>
 
     <!-- Content -->
-    <div v-else-if="weather" class="w-full flex flex-col h-full">
-      <!-- Current -->
-      <div class="flex-1 flex flex-col items-center justify-center mb-2">
-        <div class="text-5xl mb-1">{{ getSymbolIcon(weather.current.symbol) }}</div>
-        <div class="text-4xl font-bold tracking-tighter">
-          {{ weather.current.temp }}°
+    <div v-else-if="weather" class="w-full h-full flex flex-col">
+      <!-- 2x2 Grid -->
+      <div class="flex-1 grid grid-cols-2 grid-rows-2 gap-2">
+        <!-- Today (Current) -->
+        <div class="bg-white/5 rounded-lg flex flex-col items-center justify-center p-3 relative">
+          <div class="text-xs uppercase tracking-widest opacity-40 font-bold absolute top-2 left-0 right-0 text-center">Idag</div>
+          <div class="text-4xl mb-1">{{ getSymbolIcon(weather.current.symbol) }}</div>
+          <div class="text-3xl font-bold tracking-tighter">{{ weather.current.temp }}°</div>
+          <div class="text-[10px] uppercase tracking-wider opacity-50 font-medium mt-0.5">
+            {{ getSymbolText(weather.current.symbol) }}
+          </div>
         </div>
-      </div>
 
-      <!-- Forecast -->
-      <div class="w-full flex flex-col gap-2">
+        <!-- Forecast Days (up to 3) -->
         <div 
-          v-for="day in weather.forecast" 
+          v-for="day in weather.forecast.slice(0, 3)" 
           :key="day.date"
-          class="flex items-center justify-between text-sm bg-white/5 rounded px-2 py-1"
+          class="bg-white/5 rounded-lg flex flex-col items-center justify-center p-3 relative"
         >
-          <span class="capitalize w-12 font-medium opacity-80">{{ formatDate(day.date) }}</span>
-          <span class="text-lg">{{ getSymbolIcon(day.symbol) }}</span>
-          <div class="flex gap-2 w-16 justify-end font-mono text-xs opacity-70">
-            <span>{{ day.max }}°</span>
-            <span class="opacity-50 text-[10px] self-end">{{ day.min }}°</span>
+          <div class="text-xs uppercase tracking-widest opacity-40 font-bold absolute top-2 left-0 right-0 text-center">
+            {{ formatDate(day.date) }}
+          </div>
+          <div class="text-3xl mb-1">{{ getSymbolIcon(day.symbol) }}</div>
+          <div class="flex gap-1.5 items-baseline font-mono">
+            <span class="text-2xl font-bold tracking-tight">{{ day.max }}°</span>
+            <span class="text-sm opacity-50">{{ day.min }}°</span>
+          </div>
+          <div class="text-[10px] uppercase tracking-wider opacity-50 font-medium mt-0.5">
+            {{ getSymbolText(day.symbol) }}
           </div>
         </div>
       </div>
 
       <!-- Last Updated -->
-      <div v-if="lastUpdated" class="w-full text-[10px] opacity-30 text-center mt-2">
-        Uppdaterat {{ lastUpdated.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' }) }}
+      <div v-if="lastUpdated" class="w-full text-[9px] opacity-20 text-center mt-2">
+        {{ lastUpdated.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' }) }}
       </div>
     </div>
   </div>
