@@ -80,9 +80,7 @@ const handleWidgetChange = (slotIndex: number, subIndex: number, newWidgetId: st
   }
 }
 
-const getNameKey = (slotIndex: number, subIndex: number, isSplit: boolean): string => {
-  return isSplit ? `${slotIndex}-${subIndex}` : `${slotIndex}`
-}
+
 </script>
 
 <template>
@@ -177,19 +175,7 @@ const getNameKey = (slotIndex: number, subIndex: number, isSplit: boolean): stri
                     </select>
                   </div>
                   
-                  <!-- Widget Name Input -->
-                  <div v-if="(Array.isArray(slot.widgetId) ? slot.widgetId[idx] : slot.widgetId)" class="pl-4 border-l border-white/5 space-y-1">
-                    <label class="block text-[8px] uppercase tracking-wider font-bold text-[var(--dash-text-muted)]">
-                      {{ $t('customName') }}
-                    </label>
-                    <input
-                      type="text"
-                      :value="dashboardStore.config?.widgetNames?.[getNameKey(slot.index, idx, Array.isArray(slot.widgetId))] || ''"
-                      @input="(e) => dashboardStore.updateWidgetName(getNameKey(slot.index, idx, Array.isArray(slot.widgetId)), (e.target as HTMLInputElement).value)"
-                      :placeholder="availableWidgets.find(w => w.id === (Array.isArray(slot.widgetId) ? slot.widgetId[idx] : slot.widgetId))?.title || ''"
-                      class="w-full px-2 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs text-[var(--dash-text)] placeholder-[var(--dash-text-muted)] focus:outline-none focus:border-white/20 transition-colors"
-                    />
-                  </div>
+
                 </div>
               </div>
             </div>

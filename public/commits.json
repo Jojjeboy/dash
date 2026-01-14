@@ -1,5 +1,11 @@
 [
   {
+    "hash": "86957b8",
+    "fullHash": "86957b86fed50ff793431804e9fc8fcb6192c05c",
+    "date": "2026-01-14 13:04:05 +0100",
+    "message": "Minor layout adjustments"
+  },
+  {
     "hash": "b8b9273",
     "fullHash": "b8b927382a93af799305360a732f19e03814311e",
     "date": "2026-01-14 12:50:09 +0100",
@@ -112,11 +118,5 @@
     "fullHash": "64db2bafb23d728a61e060fc6f9ba8cfca92dc7f",
     "date": "2026-01-12 14:28:30 +0100",
     "message": "Commits.json"
-  },
-  {
-    "hash": "3349e03",
-    "fullHash": "3349e03576a4f30edb1bc43fb175b095445be06f",
-    "date": "2026-01-12 14:27:26 +0100",
-    "message": "Settings updates"
   }
 ]

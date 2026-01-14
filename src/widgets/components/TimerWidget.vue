@@ -12,7 +12,10 @@ const isRunning = ref(false)
 let timerInterval: number | null = null
 const audioContext = ref<AudioContext | null>(null)
 
+const emit = defineEmits(['update-title'])
+
 onMounted(() => {
+  emit('update-title', 'Timer')
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   audioContext.value = new (window.AudioContext || (window as any).webkitAudioContext)()
 

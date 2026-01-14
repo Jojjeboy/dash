@@ -9,7 +9,6 @@ export interface DashboardConfig {
   layoutMode: 4 | 6
   theme: 'dark' | 'light'
   activeWidgetIds: string[] // Stored as 'id1' or 'id1|id2' for split slots
-  widgetNames?: Record<string, string> // Maps slot index or "index-subindex" to custom name
   calendarIcsPath?: string
   newsConfig: {
     maxItems: number
@@ -156,18 +155,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     })
   }
 
-  const updateWidgetName = (key: string, name: string) => {
-    const currentNames = { ...(config.value?.widgetNames || {}) }
 
-    if (name.trim() === '') {
-      // Remove the custom name if empty
-      delete currentNames[key]
-    } else {
-      currentNames[key] = name.trim()
-    }
-
-    saveConfig({ widgetNames: currentNames })
-  }
 
   return {
     config,
@@ -179,7 +167,6 @@ export const useDashboardStore = defineStore('dashboard', () => {
     updateWidgetSlot,
     updateCalendarPath,
     updateNewsConfig,
-    updateWidgetName,
     layoutMode: computed(() => {
       if (!config.value) return DEFAULT_CONFIG.layoutMode
       return config.value.layoutMode

@@ -82,3 +82,30 @@ registry.register({
 - **Glassmorphism**: Use the `.glass-tile` class (inherited from parent) or similar styles to stay consistent.
 - **Error Handling**: Widgets should handle their own internal errors gracefully.
 - **Prop Usage**: The `WidgetSlot.vue` component provides basic layout context if needed.
+
+## Setting a Title
+
+Widgets are responsible for declaring their own titles. The app shell (via `WidgetSlot.vue`) listens for an `update-title` event and displays the provided string in a standardized top-centered position.
+
+### Implementation
+Define the `update-title` emit and call it when the widget mounts or when the title should change.
+
+```vue
+<script setup lang="ts">
+const emit = defineEmits(['update-title'])
+
+onMounted(() => {
+  emit('update-title', 'My Widget')
+})
+</script>
+```
+
+### Visual Consistency
+The app shell uses specific styling for these titles:
+- Font Size: `11px`
+- Font weight: `black`
+- Transform: `uppercase`
+- Tracking: `0.2em`
+- Color: `var(--dash-text-muted)`
+
+This ensures that the dashboard remains visually clean and unified regardless of the widget's internal complexity.

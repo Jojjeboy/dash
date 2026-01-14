@@ -16,8 +16,11 @@ const selectedStation = computed(() =>
   STATIONS.find(s => s.gid === selectedGid.value) ?? STATIONS[0]
 )
 
+const emit = defineEmits(['update-title'])
+
 // Load saved station from localStorage
 onMounted(() => {
+  emit('update-title', 'Avgångar')
   const savedGid = localStorage.getItem('dash_commute_station')
   if (savedGid && STATIONS.find(s => s.gid === savedGid)) {
     selectedGid.value = savedGid

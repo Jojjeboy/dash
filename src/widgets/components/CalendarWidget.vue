@@ -12,8 +12,11 @@ const error = ref<string | null>(null)
 const currentTime = ref(new Date())
 const scrollContainer = ref<HTMLElement | null>(null)
 
+const emit = defineEmits(['update-title'])
+
 // Update current time every minute
 onMounted(() => {
+  emit('update-title', 'Lias skolschema')
   window.setInterval(() => {
     currentTime.value = new Date()
   }, 60000) // Update every minute

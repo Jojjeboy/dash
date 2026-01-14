@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { defineAsyncComponent, computed, ref } from 'vue'
 import { registry } from '@/widgets/registry'
-import { useDashboardStore } from '@/stores/dashboard'
 import { useI18n } from 'vue-i18n'
 
 interface Props {
@@ -10,7 +9,6 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-const dashboardStore = useDashboardStore()
 const { t } = useI18n()
 
 // Helper to get component for a widget ID
@@ -26,17 +24,9 @@ const handleTitleUpdate = (id: string, newTitle: string) => {
   dynamicTitles.value[id] = newTitle
 }
 
-const getWidgetName = (id: string, subIndex?: number) => {
-  // 1. Dynamic title from widget itself
-  if (dynamicTitles.value[id]) return dynamicTitles.value[id]
-
-  // 2. Custom name from store
-  const key = subIndex !== undefined ? `${props.index}-${subIndex}` : `${props.index}`
-  const customName = dashboardStore.config?.widgetNames?.[key]
-  if (customName) return customName
-  
-  // 3. Registry default
-  return registry.get(id)?.title || ''
+const getWidgetName = (id: string) => {
+  // Return dynamic title if available, otherwise fallback to registry title
+  return dynamicTitles.value[id] || registry.get(id)?.title || ''
 }
 
 const isSplit = computed(() => Array.isArray(props.widgetId))
@@ -48,11 +38,11 @@ const widgetIds = computed(() => {
 })
 
 const widgetConfigs = computed(() => {
-  return widgetIds.value.map((id, subIdx) => {
+  return widgetIds.value.map((id) => {
     return {
       id: id,
       component: getWidgetComponent(id),
-      name: id ? getWidgetName(id, isSplit.value ? subIdx : undefined) : ''
+      name: id ? getWidgetName(id) : ''
     }
   })
 })

@@ -24,6 +24,23 @@ Dash is a wall-mounted, always-on dashboard web application designed to run on a
 - `src/stores/`: Pinia stores for auth and configuration.
 - `src/views/`: Main application routes (Dashboard, Login, Settings).
 
+## Widgets & Titles
+
+Widgets in Dash declare their own titles. The app shell provides a standardized, top-centered container for these titles to ensure a consistent dashboard aesthetic.
+
+### How it works
+Each widget component is responsible for emitting its preferred title. This allows for dynamic titles (e.g., a "Timer" widget showing its current status in the title area).
+
+Example:
+```vue
+<script setup lang="ts">
+const emit = defineEmits(['update-title'])
+onMounted(() => {
+  emit('update-title', 'Mitt Widget-Namn')
+})
+</script>
+```
+
 ## Documentation
 
 - [Widget Development Guide](./docs/WIDGET_DEVELOPMENT.md) — How to create and register new widgets.

@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useDashboardStore } from '@/stores/dashboard'
 import { useGNews } from '@/composables/useGNews'
 import { ArrowPathIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline'
+
+const emit = defineEmits(['update-title'])
+
+onMounted(() => {
+  emit('update-title', 'Nyheter')
+})
 
 const dashboardStore = useDashboardStore()
 const newsConfig = computed(() => dashboardStore.config?.newsConfig || {

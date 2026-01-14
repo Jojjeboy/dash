@@ -222,8 +222,11 @@ const formatDate = (dateStr: string) => {
   return d.toLocaleDateString('sv-SE', { weekday: 'short', day: 'numeric' })
 }
 
+const emit = defineEmits(['update-title'])
+
 onMounted(() => {
   fetchWeather()
+  emit('update-title', 'Väder')
 })
 </script>
 
