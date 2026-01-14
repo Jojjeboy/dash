@@ -20,6 +20,7 @@ registry.register({
   id: 'gnews',
   title: 'Gnews',
   component: () => import('./components/GNewsWidget.vue'),
+  settingsComponent: () => import('./components/GNewsWidgetSettings.vue'),
   size: 'single'
 })
 

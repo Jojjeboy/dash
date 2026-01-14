@@ -257,7 +257,7 @@ const alignmentClass = computed(() => {
 <template>
   <div 
     ref="widgetRef" 
-    class="w-full h-full p-6 text-[#e0e0e0] transition-all duration-1000 ease-in-out relative"
+    class="w-full h-full p-4 text-[#e0e0e0] transition-all duration-1000 ease-in-out relative"
     :class="[containerClass, alignmentClass]"
     :style="{ opacity: contentOpacity }"
   >
@@ -316,7 +316,7 @@ const alignmentClass = computed(() => {
             >
                 <div v-if="historyEvent" class="flex flex-col h-full justify-center">
                     <div class="text-[10px] uppercase tracking-widest opacity-30 mb-2 font-black flex justify-between w-full">
-                        <span>Hände {{ historyEvent.year }}</span>
+                        <span>{{ dateStr.split(' ').slice(1).join(' ') }} år: {{ historyEvent.year }}</span>
                         <span class="opacity-0 group-hover:opacity-100 transition-opacity">Visa alla →</span>
                     </div>
                     <div class="text-xs leading-relaxed opacity-70 line-clamp-4 font-medium italic">

@@ -41,6 +41,12 @@ onMounted(() => {
 </script>
 ```
 
+### Selecting Widgets
+Widgets are selected directly on the dashboard.
+1.  Hover over any widget slot.
+2.  Click the "Cog" / Settings icon that appears in the corner.
+3.  Choose a new widget from the dropdown list.
+
 ## Documentation
 
 - [Widget Development Guide](./docs/WIDGET_DEVELOPMENT.md) — How to create and register new widgets.

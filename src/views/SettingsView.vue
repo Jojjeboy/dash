@@ -21,7 +21,6 @@ const handleLogout = async () => {
     console.error('Logout failed:', error)
   }
 }
-const NewsWidgetSettings = defineAsyncComponent(() => import('@/widgets/components/GNewsWidgetSettings.vue'))
 
 const lastCommitMessage = __LAST_COMMIT_MESSAGE__
 const commitHash = __COMMIT_HASH__
@@ -53,32 +52,7 @@ onMounted(async () => {
   }
 })
 
-const toggleSplit = (index: number, currentWidgetId: string | string[] | null) => {
-  if (Array.isArray(currentWidgetId)) {
-    // Merge: Keep the first widget
-    dashboardStore.updateWidgetSlot(index, currentWidgetId[0] || '')
-  } else {
-    // Split: Keep current widget as first, second is empty
-    dashboardStore.updateWidgetSlot(index, [currentWidgetId || '', ''])
-  }
-}
 
-const handleWidgetChange = (slotIndex: number, subIndex: number, newWidgetId: string, isSplit: boolean) => {
-  if (isSplit) {
-    const slot = dashboardStore.slots.find(s => s.index === slotIndex)
-    const currentSlotIds = (slot && Array.isArray(slot.widgetId))
-      ? [...slot.widgetId] 
-      : [(slot?.widgetId as string) || '', '']
-    
-    // Ensure array is at least 2 elements long
-    while (currentSlotIds.length < 2) currentSlotIds.push('')
-    
-    currentSlotIds[subIndex] = newWidgetId
-    dashboardStore.updateWidgetSlot(slotIndex, currentSlotIds)
-  } else {
-    dashboardStore.updateWidgetSlot(slotIndex, newWidgetId)
-  }
-}
 
 
 </script>
@@ -130,64 +104,46 @@ const handleWidgetChange = (slotIndex: number, subIndex: number, newWidgetId: st
           </div>
         </section>
 
-        <!-- Widgets Section -->
+        <!-- Widget Configuration Section -->
         <section>
           <div class="flex items-center justify-between mb-4">
             <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">{{ $t('widgets') }}</h2>
           </div>
           <div class="space-y-3">
-            <div
-              v-for="slot in dashboardStore.slots"
-              :key="slot.index"
-              class="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-4"
+            <details
+              v-for="widget in availableWidgets"
+              :key="widget.id"
+              class="group bg-white/5 rounded-2xl border border-white/5 overflow-hidden transition-all duration-300 open:bg-white/10"
             >
-              <div class="flex items-center justify-between">
-                <span class="text-[10px] uppercase tracking-widest text-[var(--dash-text-muted)] font-black">{{ $t('slot') }} {{ slot.index + 1 }}</span>
-                <button 
-                  @click="toggleSplit(slot.index, slot.widgetId)"
-                  class="text-[9px] uppercase tracking-widest font-bold px-2 py-1 rounded bg-white/5 hover:bg-white/10 transition-colors"
-                >
-                  {{ Array.isArray(slot.widgetId) ? $t('mergeSlot') : $t('splitSlot') }}
-                </button>
-              </div>
-
-              <!-- Widget Selection(s) -->
-              <div class="space-y-4">
-                <div v-for="idx in (Array.isArray(slot.widgetId) ? [0, 1] : [0])" :key="idx" class="space-y-2">
-                  <div class="flex items-center justify-between gap-4">
-                    <span v-if="Array.isArray(slot.widgetId)" class="text-[9px] uppercase tracking-wider text-[var(--dash-text-muted)] font-bold">
-                      {{ idx === 0 ? $t('widgets') + ' 1' : $t('widgets') + ' 2' }}
-                    </span>
-                    <select
-                      :value="Array.isArray(slot.widgetId) ? slot.widgetId[idx] : (slot.widgetId || '')"
-                      @change="(e) => handleWidgetChange(slot.index, idx, (e.target as HTMLSelectElement).value, Array.isArray(slot.widgetId))"
-                      class="flex-1 bg-transparent text-xs font-bold text-[var(--dash-text)] outline-none cursor-pointer text-right"
-                    >
-                      <option value="" class="bg-[#1a1c1e] text-white">{{ $t('empty') }}</option>
-                      <option
-                        v-for="widget in availableWidgets"
-                        :key="widget.id"
-                        :value="widget.id"
-                        class="bg-[#1a1c1e] text-white"
-                      >
-                        {{ widget.title }}
-                      </option>
-                    </select>
+              <summary class="flex items-center justify-between p-4 cursor-pointer select-none list-none outline-none">
+                <div class="flex items-center gap-3">
+                  <div class="flex flex-col text-left">
+                    <span class="text-xs font-bold text-[var(--dash-text)] group-hover:text-white transition-colors">{{ widget.title }}</span>
+                    <span class="text-[9px] text-[var(--dash-text-muted)] font-medium">{{ widget.description || $t('settings') }}</span>
                   </div>
-                  
-
+                </div>
+                <!-- Chevron Icon -->
+                <svg 
+                  class="w-4 h-4 text-[var(--dash-text-muted)] transition-transform duration-300 group-open:rotate-180" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              
+              <div class="p-4 pt-0 border-t border-white/5 mt-4">
+                <component
+                  v-if="widget.settingsComponent"
+                  :is="defineAsyncComponent(widget.settingsComponent)"
+                />
+                <div v-else class="py-2 text-[10px] text-[var(--dash-text-muted)] italic text-center opacity-50">
+                  {{ $t('noSettingsForWidget') }}
                 </div>
               </div>
-            </div>
+            </details>
           </div>
-        </section>
-
-        <!-- News Settings -->
-        <section>
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">Nyheter (Sveriges Radio)</h2>
-          </div>
-          <NewsWidgetSettings />
         </section>
 
         <!-- Updates & History Section -->
@@ -232,27 +188,6 @@ const handleWidgetChange = (slotIndex: number, subIndex: number, newWidgetId: st
           </div>
         </section>
 
-        <!-- Calendar Settings -->
-        <section>
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-[10px] uppercase tracking-[0.2em] text-[var(--dash-text-muted)] font-black">{{ $t('calendar') }}</h2>
-          </div>
-          <div class="p-4 bg-white/5 rounded-2xl border border-white/5">
-            <label class="block text-[10px] uppercase tracking-wider font-bold text-[var(--dash-text-muted)] mb-2">
-              {{ $t('icsFilePath') }}
-            </label>
-            <input
-              type="text"
-              :value="dashboardStore.config?.calendarIcsPath || 'liakar1020@skola.goteborg.se.ics'"
-              @input="(e) => dashboardStore.updateCalendarPath((e.target as HTMLInputElement).value)"
-              class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-xs text-[var(--dash-text)] placeholder-[var(--dash-text-muted)] focus:outline-none focus:border-white/20 transition-colors"
-              placeholder="liakar1020@skola.goteborg.se.ics"
-            />
-            <p class="text-[9px] text-[var(--dash-text-muted)] mt-2 italic">
-              {{ $t('icsFilePathDescription') }}
-            </p>
-          </div>
-        </section>
 
         <!-- Account Section (Moved to Bottom) -->
         <section>

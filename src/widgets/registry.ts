@@ -44,6 +44,7 @@ registry.register({
   title: 'Skolschema',
   description: 'Dagligt skolschema från kalender',
   component: () => import('./components/CalendarWidget.vue'),
+  settingsComponent: () => import('./components/CalendarWidgetSettings.vue'),
   defaultSize: 'medium',
   size: 'single'
 })

@@ -8,7 +8,7 @@ export interface DashboardConfig {
   version: number
   layoutMode: 4 | 6
   theme: 'dark' | 'light'
-  activeWidgetIds: string[] // Stored as 'id1' or 'id1|id2' for split slots
+  activeWidgetIds: string[] // Stored as 'id1', 'id2', etc. (No split slots)
   calendarIcsPath?: string
   newsConfig: {
     maxItems: number
@@ -44,15 +44,9 @@ export const useDashboardStore = defineStore('dashboard', () => {
     const rawWidgetIds = activeConfig.activeWidgetIds || []
 
     return Array.from({ length: count }, (_, i) => {
-      const rawId = rawWidgetIds[i] || null
-      // Parse split slots (stored as 'id1|id2')
-      const widgetId = (typeof rawId === 'string' && rawId.includes('|'))
-        ? rawId.split('|')
-        : (rawId || null)
-
       return {
         index: i,
-        widgetId,
+        widgetId: rawWidgetIds[i] || null,
       }
     })
   })
@@ -120,7 +114,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     saveConfig({ theme })
   }
 
-  const updateWidgetSlot = (index: number, widgetId: string | string[] | null) => {
+  const updateWidgetSlot = (index: number, widgetId: string | null) => {
     const currentIds = [...(config.value?.activeWidgetIds || DEFAULT_CONFIG.activeWidgetIds)]
 
     // Ensure the array is long enough
@@ -128,12 +122,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
       currentIds.push('')
     }
 
-    // Serialize split slots to string before saving to Firebase
-    const serializedId = Array.isArray(widgetId)
-      ? widgetId.join('|')
-      : (widgetId || '')
-
-    currentIds[index] = serializedId
+    currentIds[index] = widgetId || ''
     saveConfig({ activeWidgetIds: currentIds })
   }
 
