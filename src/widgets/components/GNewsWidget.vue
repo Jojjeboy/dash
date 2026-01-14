@@ -112,10 +112,10 @@ const formatTime = (dateStr: string) => {
               {{ formatTime(article.publishedAt) }}
             </span>
           </div>
-          <h3 class="text-[11px] font-bold leading-tight line-clamp-2 mb-0.5">
+          <h3 class="text-[13px] font-bold leading-tight line-clamp-2 mb-0.5">
             {{ article.title }}
           </h3>
-          <p class="text-[10px] leading-tight text-[var(--dash-text-muted)] line-clamp-2">
+          <p class="text-[11px] leading-tight text-[var(--dash-text-muted)] line-clamp-2">
             {{ article.description }}
           </p>
         </div>

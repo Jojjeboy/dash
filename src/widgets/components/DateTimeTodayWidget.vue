@@ -299,15 +299,15 @@ const alignmentClass = computed(() => {
             <div class="bg-white/5 rounded-2xl flex flex-col items-center justify-center p-2 relative overflow-hidden">
                 <div v-if="timeLeft > 0 || isRunning" class="relative w-full h-full flex items-center justify-center">
                     <!-- Circular Progress -->
-                    <svg class="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
+                    <svg class="w-32 h-32 transform -rotate-90" viewBox="0 0 100 100">
                         <!-- Background Circle -->
-                        <circle cx="50" cy="50" r="45" fill="none" class="stroke-white/10" stroke-width="4" />
+                        <circle cx="50" cy="50" r="45" fill="none" class="stroke-white/10" stroke-width="3" />
                         <!-- Progress Circle -->
                         <circle 
                             cx="50" cy="50" r="45" 
                             fill="none" 
                             class="stroke-[var(--dash-text)] transition-all duration-1000 ease-linear"
-                            stroke-width="4" 
+                            stroke-width="3" 
                             stroke-linecap="round"
                             :stroke-dasharray="circumference"
                             :stroke-dashoffset="dashOffset"
@@ -315,40 +315,40 @@ const alignmentClass = computed(() => {
                     </svg>
 
                     <!-- Time & Controls Overlay -->
-                    <div class="absolute inset-0 flex flex-col items-center justify-center z-10">
-                        <div class="text-xl font-black tabular-nums tracking-tight leading-none mb-1">
+                    <div class="absolute inset-0 flex flex-col items-center justify-center z-10 gap-2">
+                        <div class="text-3xl font-black tabular-nums tracking-tight leading-none">
                             {{ formattedTimer }}
                         </div>
                         <div class="flex gap-2">
                              <button
                                 @click.stop="isRunning ? stopTimer() : startTimer()"
-                                class="w-6 h-6 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all active:scale-95"
+                                class="w-8 h-8 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all active:scale-95"
                             >
-                                <svg v-if="isRunning" class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>
-                                <svg v-else class="w-3 h-3 fill-current ml-0.5" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                <svg v-if="isRunning" class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>
+                                <svg v-else class="w-4 h-4 fill-current ml-0.5" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                             </button>
                             <button
                                 @click.stop="resetTimer"
-                                class="w-6 h-6 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all active:scale-95"
+                                class="w-8 h-8 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all active:scale-95"
                             >
-                                <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <div v-else class="w-full h-full flex flex-col items-center justify-center">
-                    <div class="text-[9px] uppercase tracking-widest opacity-30 mb-2 font-black">Set Timer</div>
-                    <div class="flex items-center justify-center gap-1 mb-2">
-                        <input v-model="inputMinutes" type="number" class="bg-transparent border-b border-white/20 text-center w-8 py-0.5 text-lg font-bold outline-none focus:border-white transition-colors placeholder-white/20" placeholder="00">
-                        <span class="text-lg font-bold opacity-50 relative -top-[1px]">:</span>
-                        <input v-model="inputSeconds" type="number" class="bg-transparent border-b border-white/20 text-center w-8 py-0.5 text-lg font-bold outline-none focus:border-white transition-colors placeholder-white/20" placeholder="00">
+                <div v-else class="w-full h-full flex flex-col items-center justify-center gap-3">
+                    <div class="text-[8px] uppercase tracking-widest opacity-30 font-black">Set Timer</div>
+                    <div class="flex items-center justify-center gap-2">
+                        <input v-model="inputMinutes" type="number" class="bg-transparent border-b border-white/20 text-center w-12 py-1 text-3xl font-bold outline-none focus:border-white transition-colors placeholder-white/20" placeholder="0">
+                        <span class="text-3xl font-bold opacity-50">:</span>
+                        <input v-model="inputSeconds" type="number" class="bg-transparent border-b border-white/20 text-center w-12 py-1 text-3xl font-bold outline-none focus:border-white transition-colors placeholder-white/20" placeholder="0">
                     </div>
                     <button
                         @click.stop="startTimer"
-                        class="w-8 h-8 rounded-full bg-[var(--dash-text)] text-[var(--dash-bg)] flex items-center justify-center shadow-lg active:scale-95 transition-all hover:opacity-90"
+                        class="w-10 h-10 rounded-full bg-[var(--dash-text)] text-[var(--dash-bg)] flex items-center justify-center shadow-lg active:scale-95 transition-all hover:opacity-90"
                     >
-                         <svg class="w-4 h-4 fill-current ml-0.5" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                         <svg class="w-5 h-5 fill-current ml-0.5" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                     </button>
                 </div>
             </div>

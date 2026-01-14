@@ -48,6 +48,11 @@ const selectWidget = (newId: string) => {
   showChooser.value = false
 }
 
+const getWidgetSlotText = (widgetId: string) => {
+  const slot = dashboardStore.slots.find(s => s.widgetId === widgetId)
+  return slot ? `Slot ${slot.index + 1}` : ''
+}
+
 </script>
 
 <template>
@@ -92,14 +97,17 @@ const selectWidget = (newId: string) => {
              {{ t('empty') }}
            </button>
            <button 
-             v-for="w in availableWidgets" 
-             :key="w.id"
-             @click="selectWidget(w.id)"
-             class="px-3 py-2 rounded-lg text-left text-xs font-bold transition-colors"
-             :class="[widgetConfig.id === w.id ? 'bg-white text-[#1a1c1e]' : 'hover:bg-white/10 text-white']"
-           >
-             {{ w.title }}
-           </button>
+              v-for="w in availableWidgets" 
+              :key="w.id"
+              @click="selectWidget(w.id)"
+              class="px-3 py-2 rounded-lg flex items-center justify-between text-xs font-bold transition-colors"
+              :class="[widgetConfig.id === w.id ? 'bg-white text-[#1a1c1e]' : 'hover:bg-white/10 text-white']"
+            >
+              <span>{{ w.title }}</span>
+              <span v-if="getWidgetSlotText(w.id)" class="text-[8px] uppercase font-bold opacity-40 ml-2">
+                {{ getWidgetSlotText(w.id) }}
+              </span>
+            </button>
         </div>
       </div>
 
