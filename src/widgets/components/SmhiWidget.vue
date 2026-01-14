@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useScreenHealth } from '@/composables/useScreenHealth'
+import { LOCATION } from '@/config/location'
 
 // Screen Health Integration
 const widgetRef = ref<HTMLElement | null>(null)
@@ -43,7 +44,7 @@ const weather = ref<WeatherData | null>(null)
 const lastUpdated = ref<Date | null>(null)
 
   
-const SMHI_URL = 'https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/11.9281/lat/57.6710/data.json'
+const SMHI_URL = `https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/${LOCATION.lon}/lat/${LOCATION.lat}/data.json`
 
 // Mapping SMHI Wsymb2 codes to emojis/descriptions
 // 1-27 scale. Simplified mapping.
@@ -221,7 +222,7 @@ const getRelativeDateLabel = (dateStr: string) => {
   const dayMonth = `${t2.getDate()}/${t2.getMonth() + 1}`
   
   if (diffDays === 1) return `Imorgon ${weekday} ${dayMonth}`
-  if (diffDays === 2) return `Övermorgon ${weekday} ${dayMonth}`
+  if (diffDays === 2) return `I övermorgon ${weekday} ${dayMonth}`
   
   const capWeekday = weekday.charAt(0).toUpperCase() + weekday.slice(1)
   return `${capWeekday} ${dayMonth}`

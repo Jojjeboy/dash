@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useScreenHealth } from '@/composables/useScreenHealth'
 import namesData from '@/assets/names.json'
+import { LOCATION } from '@/config/location'
 
 import alertSound from '@/assets/timer.mp3'
 
@@ -15,6 +16,8 @@ const historyEvent = ref<{ year: number; text: string } | null>(null)
 const allHistoryEvents = ref<{ year: number; text: string }[]>([])
 const isLoadingHistory = ref(false)
 const showFullHistory = ref(false)
+const sunrise = ref<string | null>(null)
+const sunset = ref<string | null>(null)
 
 const timeLeft = ref(0)
 const totalTime = ref(0)
@@ -190,11 +193,29 @@ const resetTimer = () => {
   timeLeft.value = 0
 }
 
+// --- Sunrise/Sunset API ---
+const fetchSunTimes = async () => {
+  try {
+    const response = await fetch(`https://api.sunrise-sunset.org/json?lat=${LOCATION.lat}&lng=${LOCATION.lon}&date=today&formatted=0`)
+    const data = await response.json()
+    if (data.status === 'OK') {
+      // Convert UTC time to local time and format
+      const sunriseTime = new Date(data.results.sunrise)
+      const sunsetTime = new Date(data.results.sunset)
+      sunrise.value = sunriseTime.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' })
+      sunset.value = sunsetTime.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' })
+    }
+  } catch (err) {
+    console.error('Failed to fetch sun times:', err)
+  }
+}
+
 // --- Lifecycle ---
 onMounted(() => {
   updateTime()
   timeInterval = window.setInterval(updateTime, 60000)
   fetchHistory() // Initial fetch
+  fetchSunTimes() // Fetch sunrise/sunset
   
   // Initialize Audio Context
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -278,7 +299,19 @@ const alignmentClass = computed(() => {
                 <div class="text-7xl font-black tracking-tighter opacity-90 font-mono transition-transform group-hover:scale-110 duration-700">
                     {{ timeStr }}
                 </div>
-                <div class="text-[10px] uppercase tracking-[0.3em] opacity-30 mt-2 font-black">Klockan</div>
+                <div class="text-[10px] uppercase tracking-[0.3em] opacity-30 font-black">Klockan</div>
+                
+                <!-- Sunrise/Sunset Times -->
+                <div v-if="sunrise && sunset" class="flex gap-3 mt-3 items-center justify-center">
+                    <div class="flex items-center gap-1 text-[9px] font-bold opacity-50">
+                        <span class="text-base">🌅</span>
+                        <span>{{ sunrise }}</span>
+                    </div>
+                    <div class="flex items-center gap-1 text-[9px] font-bold opacity-50">
+                        <span class="text-base">🌇</span>
+                        <span>{{ sunset }}</span>
+                    </div>
+                </div>
             </div>
 
             <!-- Box 2: Date, Week & Namnsdag -->
