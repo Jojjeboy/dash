@@ -1,5 +1,11 @@
 [
   {
+    "hash": "c5b9fea",
+    "fullHash": "c5b9fea5400e1443530008816f7b2a885204dd5d",
+    "date": "2026-01-14 19:59:41 +0100",
+    "message": "Minor fix"
+  },
+  {
     "hash": "bbae6d1",
     "fullHash": "bbae6d14600f533ae711d1952662c3a5dbf25412",
     "date": "2026-01-14 15:31:10 +0100",
@@ -112,11 +118,5 @@
     "fullHash": "bd8c46038e3dbff780ff25faa2f6cd98cdf8f1d0",
     "date": "2026-01-13 09:58:03 +0100",
     "message": "smhi widget"
-  },
-  {
-    "hash": "493e9c4",
-    "fullHash": "493e9c4b768dd8e4aa6e552f3f581c9f95d2cf93",
-    "date": "2026-01-12 16:22:23 +0100",
-    "message": "Solid calendar color"
   }
 ]

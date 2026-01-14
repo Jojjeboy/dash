@@ -97,14 +97,16 @@ export const useDashboardStore = defineStore('dashboard', () => {
   }
 
   // Helper to remove undefined values from objects (Firestore doesn't accept undefined)
-  const removeUndefined = (obj: any): any => {
+  // Helper to remove undefined values from objects (Firestore doesn't accept undefined)
+  const removeUndefined = (obj: unknown): unknown => {
     if (obj === null || typeof obj !== 'object') return obj
     if (Array.isArray(obj)) return obj.map(removeUndefined)
 
-    const result: any = {}
-    for (const key in obj) {
-      if (obj[key] !== undefined) {
-        result[key] = typeof obj[key] === 'object' ? removeUndefined(obj[key]) : obj[key]
+    const result: Record<string, unknown> = {}
+    const tempObj = obj as Record<string, unknown>
+    for (const key in tempObj) {
+      if (tempObj[key] !== undefined) {
+        result[key] = typeof tempObj[key] === 'object' ? removeUndefined(tempObj[key]) : tempObj[key]
       }
     }
     return result
@@ -123,7 +125,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     }
 
     // Remove any undefined values before saving
-    const finalConfig = removeUndefined(mergedConfig)
+    const finalConfig = removeUndefined(mergedConfig) as Record<string, unknown>
 
     try {
       await setDoc(configRef, finalConfig, { merge: true })
